@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Playbook — Big Frog BJJ / JCI / Team Curran</title>
+<style>
+  :root {
+    --bg: #0d0f14; --surface: #161a22; --surface2: #1e2330; --border: #2a3044;
+    --accent: #4f8ef7; --text: #e8ecf4; --muted: #7a84a0;
+    --std: #4f8ef7; --ml: #c084fc; --eb: #38bdf8; --fp: #fb923c; --ew: #f87171; --pe: #4fcfa8;
+    --std-bg: #1e2a44; --ml-bg: #2a1e44; --eb-bg: #1e3044; --fp-bg: #442a1e; --ew-bg: #441e1e; --pe-bg: #1e4434;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; }
+
+  .header { background: linear-gradient(135deg, #131826, #1a2035); border-bottom: 1px solid var(--border); padding: 36px 48px 30px; }
+  .brand-tag { font-size: 11px; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+  .header h1 { font-size: 28px; font-weight: 700; }
+  .header-sub { color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+  /* ACCOUNT TABS */
+  .account-nav { display: flex; gap: 0; border-bottom: 1px solid var(--border); background: var(--surface); overflow-x: auto; padding: 0 32px; }
+  .acc-btn { padding: 14px 20px; font-size: 13px; font-weight: 600; color: var(--muted); border: none; background: none; cursor: pointer; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.15s; }
+  .acc-btn:hover { color: var(--text); }
+  .acc-btn.active { color: var(--text); border-bottom-color: var(--accent); }
+
+  /* PHASE TABS */
+  .phase-nav { display: flex; gap: 8px; padding: 16px 48px; background: var(--bg); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .phase-btn { padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); cursor: pointer; background: var(--surface); color: var(--muted); transition: all 0.15s; }
+  .phase-btn.active.std { background: var(--std-bg); border-color: var(--std); color: var(--std); }
+  .phase-btn.active.ml  { background: var(--ml-bg);  border-color: var(--ml);  color: var(--ml); }
+  .phase-btn.active.eb  { background: var(--eb-bg);  border-color: var(--eb);  color: var(--eb); }
+  .phase-btn.active.fp  { background: var(--fp-bg);  border-color: var(--fp);  color: var(--fp); }
+  .phase-btn.active.ew  { background: var(--ew-bg);  border-color: var(--ew);  color: var(--ew); }
+  .phase-btn.active.pe  { background: var(--pe-bg);  border-color: var(--pe);  color: var(--pe); }
+
+  /* CONTENT */
+  .content { padding: 32px 48px 64px; }
+  .account-header { margin-bottom: 24px; }
+  .account-title { font-size: 20px; font-weight: 700; }
+  .account-desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; max-width: 700px; }
+
+  /* PHASE BANNER */
+  .phase-banner { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-radius: 10px; margin-bottom: 24px; font-size: 14px; }
+  .phase-banner.std { background: var(--std-bg); border: 1px solid var(--std); }
+  .phase-banner.ml  { background: var(--ml-bg);  border: 1px solid var(--ml); }
+  .phase-banner.eb  { background: var(--eb-bg);  border: 1px solid var(--eb); }
+  .phase-banner.fp  { background: var(--fp-bg);  border: 1px solid var(--fp); }
+  .phase-banner.ew  { background: var(--ew-bg);  border: 1px solid var(--ew); }
+  .phase-banner.pe  { background: var(--pe-bg);  border: 1px solid var(--pe); }
+  .phase-banner-label { font-weight: 700; font-size: 13px; }
+  .phase-banner.std .phase-banner-label { color: var(--std); }
+  .phase-banner.ml  .phase-banner-label { color: var(--ml); }
+  .phase-banner.eb  .phase-banner-label { color: var(--eb); }
+  .phase-banner.fp  .phase-banner-label { color: var(--fp); }
+  .phase-banner.ew  .phase-banner-label { color: var(--ew); }
+  .phase-banner.pe  .phase-banner-label { color: var(--pe); }
+  .phase-banner-desc { color: var(--muted); font-size: 13px; }
+
+  /* DAY CARDS */
+  .days-grid { display: flex; flex-direction: column; gap: 12px; }
+  .day-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .day-card.empty { opacity: 0.4; }
+  .day-header { display: flex; align-items: center; gap: 16px; padding: 12px 20px; background: var(--surface2); }
+  .day-name { font-size: 13px; font-weight: 700; min-width: 80px; }
+  .day-format { font-size: 11px; background: rgba(79,142,247,0.15); color: var(--accent); padding: 2px 8px; border-radius: 4px; font-weight: 600; }
+  .day-body { padding: 14px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .day-field label { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; display: block; }
+  .day-field p { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .day-field.goal p { color: var(--accent3, #4fcfa8); font-size: 12px; }
+  .rest-day { padding: 14px 20px; color: var(--muted); font-size: 13px; font-style: italic; }
+
+  @media (max-width: 700px) {
+    .header, .phase-nav, .content { padding-left: 20px; padding-right: 20px; }
+    .account-nav { padding: 0 16px; }
+    .day-body { grid-template-columns: 1fr; }
+    .acc-btn { padding: 12px 14px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand-tag">Content Playbook — Daily Posting Templates</div>
+  <h1>Weekly Content Playbook by Account &amp; Phase</h1>
+  <div class="header-sub">JCI · @BigFrogBJJ · Big Frog BJJ Retreats · Team Curran · Repeat each week based on current phase</div>
+</div>
+
+<div class="account-nav" id="accountNav"></div>
+<div class="phase-nav" id="phaseNav"></div>
+<div class="content" id="mainContent"></div>
+
+<script>
+const ACCOUNTS = [
+  { id: 'jci-yt',  label: 'JCI YouTube',    desc: 'Heavy during event cycles. Martial Life full episodes monthly + clips. Promotional Shorts ≤10 days out. YouTube monetization is the primary goal.' },
+  { id: 'jci-ig',  label: 'JCI Instagram',  desc: 'Heavy during event cycles. Athlete reveals, event countdowns, real-time event day stories, post-event carousels.' },
+  { id: 'jci-tt',  label: 'JCI TikTok',     desc: 'Heavy during event cycles. Same-day turnaround clips on event day. Trending audio. Discovery and reach focused.' },
+  { id: 'jci-li',  label: 'JCI LinkedIn',   desc: 'Moderate. Professional and sponsor-facing. Event metrics, industry content, partnership announcements.' },
+  { id: 'bfbjj',   label: '@BigFrogBJJ',    desc: 'Medium cadence. Academy community, JCML cross-promotion, membership growth, class/program content.' },
+  { id: 'ret',     label: 'BFBJJ Retreats', desc: 'Heavy during retreat cycles. Registration push, FOMO content, destination lifestyle. Light off-season.' },
+  { id: 'tc',      label: 'Team Curran',    desc: 'Light cadence (3–4x/week). Academy training content, member spotlights, Women\'s Open Mat. Sustainable solo pace.' },
+];
+
+const PHASES = [
+  { id: 'std', label: 'Standard Week',       cls: 'std', desc: 'No event within 8 weeks. Normal content cadence.' },
+  { id: 'ml',  label: '🎙 Martial Life',     cls: 'ml',  desc: '1st of every month — episode drops. Shift content around the release for that week.' },
+  { id: 'eb',  label: '⚙ Event Build',       cls: 'eb',  desc: '8–4 weeks out. Athlete reveals, ticket sales launch, sponsor content, hype building.' },
+  { id: 'fp',  label: '🔥 Final Push',       cls: 'fp',  desc: '≤10 days out. Daily urgency — ticket countdown, "under X tickets", livestream promos.' },
+  { id: 'ew',  label: '🥋 Event Week',       cls: 'ew',  desc: '7 days out through Event Day. Real-time coverage and same-day turnaround content.' },
+  { id: 'pe',  label: '📸 Post-Event',       cls: 'pe',  desc: 'Week after event. SOTN/MOTN content, highlight reel, stats recap, sponsor deliverables.' },
+];
+
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+// Phase col index: std=B, ml=C, eb=D, fp=E, ew=F, pe=G
+const PHASE_COL = { std:'B', ml:'C', eb:'D', fp:'E', ew:'F', pe:'G' };
+
+// All data keyed by [accountId][day][phaseId] = {format, content, goal}
+function parseCell(text) {
+  if (!text || text === '—') return null;
+  const fmt = (text.match(/FORMAT:\s*(.+?)(?:\n|$)/) || [])[1] || '';
+  const cnt = (text.match(/CONTENT:\s*([\s\S]+?)(?:\nGOAL:|$)/) || [])[1] || '';
+  const goal = (text.match(/GOAL:\s*(.+?)(?:\n|$)/) || [])[1] || '';
+  if (!fmt && !cnt) return null;
+  return { format: fmt.trim(), content: cnt.trim(), goal: goal.trim() };
+}
+
+const DATA = {
+  'jci-yt': {
+    Monday:    { std: parseCell('FORMAT: Clip / Short\nCONTENT: Best moment from a past JCI event — match finish, highlight, or crowd reaction\nGOAL: Keep channel active, build watch time, feed algorithm'), ml: parseCell('FORMAT: Video (Full Episode Drop)\nCONTENT: Jeff Curran: Martial Life — full episode published to JCI YouTube\nGOAL: Monetization views, subscriber retention, watch time'), eb: parseCell("FORMAT: Video (2–4 min)\nCONTENT: Athlete announcement feature — who they are, why they're competing\nGOAL: Hype the event, grow anticipation"), fp: parseCell("FORMAT: Short (45–60s)\nCONTENT: '10 days out' countdown short — match clips, hype music, ticket CTA\nGOAL: Ticket sales urgency"), ew: parseCell("FORMAT: Short\nCONTENT: '7 days out' countdown — event energy, athlete arrivals beginning\nGOAL: Build daily momentum"), pe: parseCell("FORMAT: Short\nCONTENT: 💥 Sponsored SOTN #1 — 'Submission of the Night presented by [Sponsor]' — best submission clip\nGOAL: Sponsor deliverable + viral potential") },
+    Tuesday:   { std: null, ml: parseCell("FORMAT: Short (60s)\nCONTENT: Clip 1 — most shareable/quotable moment from the episode\nGOAL: Drive traffic back to full episode, algorithm reach"), eb: null, fp: parseCell("FORMAT: Short\nCONTENT: 'Under 100 tickets remaining' or seat urgency short\nGOAL: Drive immediate ticket purchases"), ew: parseCell('FORMAT: Short\nCONTENT: Athlete check-in content or training day footage\nGOAL: Behind-the-scenes engagement'), pe: parseCell('FORMAT: Short\nCONTENT: 💥 Sponsored SOTN #2 — second-best submission of the night\nGOAL: Sponsor deliverable, sustained post-event reach') },
+    Wednesday: { std: parseCell("FORMAT: Short (60s)\nCONTENT: Martial Life teaser clip or 'best quote' from most recent episode\nGOAL: Cross-promote JCML, drive subscriptions"), ml: null, eb: parseCell("FORMAT: Short (60s)\nCONTENT: 'X weeks until JCI [#]' promo short — countdown, highlight clips, music\nGOAL: Build urgency, ticket awareness"), fp: parseCell("FORMAT: Short\nCONTENT: Livestream announcement — 'Can't make it? Watch live' with link\nGOAL: Convert non-attendees to livestream viewers = monetization"), ew: parseCell("FORMAT: Short\nCONTENT: Production/venue setup preview — 'It's coming together'\nGOAL: Event credibility, sponsor visibility"), pe: parseCell('FORMAT: Video (5–10 min)\nCONTENT: Official event highlight reel — full produced recap. Sponsor logos visible throughout.\nGOAL: Major watch time, monetization, sponsor deliverable') },
+    Thursday:  { std: null, ml: parseCell("FORMAT: Short (60s)\nCONTENT: Clip 2 — second best moment or compelling story beat from episode\nGOAL: Keep engagement high across the week"), eb: null, fp: parseCell("FORMAT: Short\nCONTENT: Athlete hype clip — 'They're ready. Are you?'\nGOAL: Emotional engagement, ticket/stream push"), ew: parseCell('FORMAT: Short\nCONTENT: Final lineup or bracket announcement with hype music\nGOAL: Match anticipation, share-worthy'), pe: parseCell("FORMAT: Short + Video\nCONTENT: 💥 Sponsored SOTN #3 (Short) + 🏆 Sponsored MOTN — 'Match of the Night presented by [Sponsor]' full clip upload\nGOAL: Sponsor deliverables, extended watch time") },
+    Friday:    { std: parseCell("FORMAT: Highlight Video (3–8 min)\nCONTENT: Athlete feature, match breakdown, or 'Top 5 Moments' from a past JCI event\nGOAL: Longer watch time = stronger monetization signal"), ml: null, eb: parseCell("FORMAT: Video (3–5 min)\nCONTENT: 'Meet the Fighters' or matchup preview — break down an anticipated pairing\nGOAL: Deep engagement, subscriber education"), fp: parseCell("FORMAT: Short\nCONTENT: 'Last chance' ticket short — countdown clock style, direct CTA\nGOAL: Final ticket push before weekend"), ew: parseCell("FORMAT: Short\nCONTENT: 'TOMORROW' — last ticket/livestream push, event day preview\nGOAL: Final conversion push"), pe: parseCell('FORMAT: Short\nCONTENT: Sponsor thank you + event stats. Title match replay or best title match clip.\nGOAL: Sponsor reporting, credibility, title match watch time') },
+    Saturday:  { std: null, ml: parseCell("FORMAT: Short (45s)\nCONTENT: Clip 3 — final highlight or teaser for next episode\nGOAL: Weekend reach, end-of-week push for views"), eb: null, fp: parseCell("FORMAT: Short\nCONTENT: Livestream promo — how to watch, time, link, what's at stake\nGOAL: Livestream viewership for event day"), ew: parseCell('FORMAT: Livestream / Raw Clip\nCONTENT: EVENT DAY — publish best raw moments same day. Upload livestream VOD. Publish sponsored preshow content.\nGOAL: Views, monetization from VOD, sponsor deliverable'), pe: parseCell("FORMAT: Video (full replay or best matches)\nCONTENT: Full event replay or 'Top 5 Matches' long-form video\nGOAL: Extended monetization window, late viewers") },
+    Sunday:    { std: parseCell('FORMAT: Short\nCONTENT: Training clip, Jeff Curran content, or Team Curran/BFBJJ crossover\nGOAL: Weekend reach, community feel'), ml: null, eb: parseCell('FORMAT: Short (45s)\nCONTENT: Sponsor spotlight or event venue/production preview\nGOAL: Sponsor value, event credibility'), fp: parseCell("FORMAT: Short\nCONTENT: 'Tomorrow/This week it happens' final hype short\nGOAL: Maximum awareness going into event"), ew: parseCell("FORMAT: Short (quick turnaround)\nCONTENT: Best match clip from yesterday — 'Did you see this?'\nGOAL: Post-event reach while hype is hot"), pe: parseCell("FORMAT: Short\nCONTENT: 'Next JCI announced — stay tuned'\nGOAL: Retain subscribers, build anticipation for next event") },
+  },
+  'jci-ig': {
+    Monday:    { std: parseCell('FORMAT: Static Graphic\nCONTENT: Quote, result, or standout stat from past JCI events\nGOAL: Brand positioning, saves'), ml: parseCell("FORMAT: Static + Story\nCONTENT: 'New Episode Out Now' — episode graphic, link in bio, swipe-up story\nGOAL: Drive episode views, cross-platform traffic"), eb: parseCell('FORMAT: Static (Athlete Announcement Graphic)\nCONTENT: Official athlete reveal — name, record, gym\nGOAL: Hype, shares, save-worthy'), fp: parseCell("FORMAT: Static / Countdown Graphic\nCONTENT: '10 days until JCI 4'\nGOAL: Urgency"), ew: parseCell("FORMAT: Static / Countdown\nCONTENT: 'Event Week is HERE' — 7-day countdown begins\nGOAL: Daily excitement"), pe: parseCell("FORMAT: Reel\nCONTENT: 💥 Sponsored SOTN #1 — 'Submission of the Night presented by [Sponsor]' graphic + clip Reel\nGOAL: Sponsor deliverable, viral potential") },
+    Tuesday:   { std: null, ml: parseCell('FORMAT: Reel (30s clip)\nCONTENT: Best shareable moment from the episode\nGOAL: Reach, saves, drive to full episode'), eb: parseCell('FORMAT: Reel\nCONTENT: Athlete highlight compilation — who this person is in action\nGOAL: Engagement, reach'), fp: parseCell("FORMAT: Reel\nCONTENT: Athlete hype reel — 'They've been training. Have you bought your ticket?'\nGOAL: Emotional push, ticket CTA"), ew: parseCell('FORMAT: Story\nCONTENT: Behind-the-scenes athlete arrivals or training day\nGOAL: Authenticity, engagement'), pe: parseCell('FORMAT: Reel + Carousel\nCONTENT: 💥 Sponsored SOTN #2 Reel + Event photo gallery carousel (athletes, crowd, sponsors)\nGOAL: Sponsor deliverable, saves/shares') },
+    Wednesday: { std: parseCell('FORMAT: Reel (30–60s)\nCONTENT: Throwback match highlight or athlete feature\nGOAL: Reach, shares'), ml: null, eb: null, fp: parseCell("FORMAT: Story\nCONTENT: Ticket link + 'Seats filling fast' — direct CTA story\nGOAL: Ticket sales"), ew: parseCell('FORMAT: Reel\nCONTENT: Venue setup / production preview\nGOAL: Credibility, sponsor visibility'), pe: parseCell("FORMAT: Static + Reel\nCONTENT: 💥 Sponsored SOTN #3 graphic + 🏆 Sponsored MOTN — 'Match of the Night presented by [Sponsor]'\nGOAL: Sponsor deliverables — 3 SOTN + 1 MOTN all fulfilled this week") },
+    Thursday:  { std: null, ml: parseCell('FORMAT: Static / Quote Card\nCONTENT: Memorable quote from Jeff or the guest\nGOAL: Saves, shares, brand voice'), eb: parseCell('FORMAT: Static (Event Graphic)\nCONTENT: Lineup update, venue graphic, or ticket CTA\nGOAL: Ticket awareness'), fp: parseCell("FORMAT: Static\nCONTENT: Livestream announcement — 'Watch live from anywhere'\nGOAL: Livestream conversions"), ew: parseCell('FORMAT: Static (Bracket/Lineup)\nCONTENT: Final lineup graphic\nGOAL: Share-worthy, anticipation'), pe: parseCell('FORMAT: Static\nCONTENT: Event stats graphic — impressions, views, attendees. Tag sponsors.\nGOAL: Credibility, sponsor value, reporting') },
+    Friday:    { std: parseCell('FORMAT: Carousel\nCONTENT: Athlete spotlight — bio, record, highlight photos\nGOAL: Saves, profile visits'), ml: parseCell("FORMAT: Story\nCONTENT: 'Did you listen yet?' episode reminder + link\nGOAL: Late-week traffic push"), eb: parseCell("FORMAT: Story Series\nCONTENT: Sponsor spotlight or 'why you should be there' series\nGOAL: Sponsor value, attendance push"), fp: parseCell("FORMAT: Reel\nCONTENT: 'Last chance' hype reel with ticket + stream CTA\nGOAL: Final push"), ew: parseCell("FORMAT: Reel\nCONTENT: 'TOMORROW' hype reel — final ticket + stream push\nGOAL: Last-day conversion"), pe: parseCell("FORMAT: Static\nCONTENT: 'Thank you' graphic — athletes, sponsors, fans\nGOAL: Relationship, brand warmth") },
+    Saturday:  { std: parseCell("FORMAT: Story (daily)\nCONTENT: Poll, Q&A, or 'who would win?' interactive\nGOAL: Engagement, algorithm signal"), ml: parseCell('FORMAT: Reel (second clip)\nCONTENT: Second best moment from the episode — keep the week alive\nGOAL: Weekend reach'), eb: parseCell('FORMAT: Reel\nCONTENT: Event hype video or crossover — Jeff Curran talking about the event\nGOAL: Emotional connection, shares'), fp: parseCell("FORMAT: Story (multiple frames)\nCONTENT: Countdown story — 'X days', venue photo, matchup teaser\nGOAL: Daily urgency"), ew: parseCell('FORMAT: Stories (live throughout day)\nCONTENT: EVENT DAY — real-time stories, match results, crowd energy. Preshow content from sponsored preshow.\nGOAL: Community, engagement, FOMO, sponsor visibility'), pe: parseCell("FORMAT: Reel\nCONTENT: Highlight reel teaser — 'Full event on YouTube now'\nGOAL: YouTube traffic, cross-platform growth") },
+    Sunday:    { std: parseCell('FORMAT: Reel or Static\nCONTENT: Community content — coaches, gyms, Team Curran crossover\nGOAL: Community feel, shares'), ml: null, eb: parseCell("FORMAT: Static\nCONTENT: 'Tickets available' graphic with CTA — clean, direct\nGOAL: Conversion"), fp: parseCell("FORMAT: Static\nCONTENT: 'This week it happens' final graphic\nGOAL: Maximum awareness"), ew: parseCell('FORMAT: Reel or Static\nCONTENT: Best match clip from yesterday — immediate post-event energy\nGOAL: Post-event reach while hot'), pe: parseCell("FORMAT: Static or Story\nCONTENT: 'Next JCI — coming soon' teaser\nGOAL: Retain followers, build anticipation") },
+  },
+  'jci-tt': {
+    Monday:    { std: null, ml: parseCell('FORMAT: TikTok (Episode teaser)\nCONTENT: Most engaging clip from the new episode — hook in first 3 seconds\nGOAL: Episode traffic, entertainment reach'), eb: parseCell('FORMAT: TikTok (Athlete intro)\nCONTENT: Quick athlete hype video — who they are, what they do\nGOAL: Hype, discovery'), fp: parseCell("FORMAT: TikTok\nCONTENT: '10 days out' countdown — clips, hype audio, ticket CTA in caption\nGOAL: Urgency, ticket sales"), ew: parseCell('FORMAT: TikTok\nCONTENT: Week-of countdown begins — event energy video\nGOAL: Daily momentum'), pe: parseCell('FORMAT: TikTok\nCONTENT: 💥 Sponsored SOTN #1 — best submission clip with sponsor name overlay\nGOAL: Sponsor deliverable, viral potential') },
+    Tuesday:   { std: parseCell('FORMAT: TikTok (30–60s)\nCONTENT: Match highlight clip — finish, slick move, or crowd reaction\nGOAL: Reach new audience, go viral'), ml: null, eb: null, fp: parseCell("FORMAT: TikTok\nCONTENT: 'Seats are filling' quick video — real or simulated urgency\nGOAL: Ticket push"), ew: null, pe: parseCell('FORMAT: TikTok\nCONTENT: 💥 Sponsored SOTN #2 — second submission clip\nGOAL: Sponsor deliverable, sustained reach') },
+    Wednesday: { std: null, ml: parseCell("FORMAT: TikTok\nCONTENT: Clip 2 from episode — different angle or topic than Monday's\nGOAL: Sustained reach across the week"), eb: parseCell("FORMAT: TikTok\nCONTENT: 'X weeks until JCI [#]' countdown video — clips + trending audio\nGOAL: Urgency, trend reach"), fp: parseCell("FORMAT: TikTok\nCONTENT: Livestream promo — 'Watch from home' — how + why\nGOAL: Livestream conversions"), ew: parseCell('FORMAT: TikTok\nCONTENT: Venue setup or production preview — trending audio\nGOAL: Credibility, FOMO'), pe: parseCell('FORMAT: TikTok\nCONTENT: 💥 Sponsored SOTN #3 + 🏆 Sponsored MOTN clip\nGOAL: Complete all sponsor deliverables this week') },
+    Thursday:  { std: parseCell('FORMAT: TikTok\nCONTENT: Martial Life clip — best moment repurposed from JCML\nGOAL: Cross-promote, entertainment value'), ml: null, eb: null, fp: parseCell("FORMAT: TikTok\nCONTENT: Athlete hype — 'They're ready. Get your tickets.'\nGOAL: Emotional push"), ew: null, pe: null },
+    Friday:    { std: null, ml: parseCell('FORMAT: TikTok\nCONTENT: Quote or reaction moment — text overlay style for quick consumption\nGOAL: Saves, shares, late-week reach'), eb: parseCell('FORMAT: TikTok\nCONTENT: Event venue preview or production behind-the-scenes\nGOAL: FOMO, credibility'), fp: parseCell("FORMAT: TikTok\nCONTENT: 'Last chance' ticket video — final direct CTA\nGOAL: Conversion"), ew: parseCell("FORMAT: TikTok\nCONTENT: 'TOMORROW' — last hype push, ticket/stream links\nGOAL: Final conversions"), pe: parseCell("FORMAT: TikTok\nCONTENT: Event atmosphere — crowd energy, production, 'This is JCI'\nGOAL: Brand storytelling, new audience discovery") },
+    Saturday:  { std: parseCell("FORMAT: TikTok\nCONTENT: Throwback JCI highlight or 'Did you know JCI?' brand intro content\nGOAL: Discovery, new followers"), ml: null, eb: null, fp: parseCell("FORMAT: TikTok\nCONTENT: Livestream reminder — 'Watch live this weekend'\nGOAL: Stream viewership"), ew: parseCell('FORMAT: TikTok (same-day turnaround)\nCONTENT: Best 30s clip from event — posted within hours of happening\nGOAL: Viral reach while trending'), pe: null },
+    Sunday:    { std: null, ml: null, eb: parseCell("FORMAT: TikTok\nCONTENT: 'What is JCI?' brand intro or Jeff Curran talking to camera\nGOAL: New audience discovery"), fp: parseCell("FORMAT: TikTok\nCONTENT: 'It happens THIS WEEK' hype clip\nGOAL: Maximum awareness"), ew: parseCell('FORMAT: TikTok\nCONTENT: Top finish or crowd moment from event day\nGOAL: Post-event momentum'), pe: parseCell("FORMAT: TikTok\nCONTENT: 'Next JCI coming soon' teaser\nGOAL: Retain followers") },
+  },
+  'jci-li': {
+    Monday:    { std: parseCell('FORMAT: LinkedIn Post\nCONTENT: Industry insight — growth of grappling, combat sports media, or event production\nGOAL: Thought leadership, professional audience'), ml: parseCell('FORMAT: LinkedIn Post\nCONTENT: New Martial Life episode — professional angle (leadership, mindset, martial arts industry)\nGOAL: Reach professional audience with JCML content'), eb: parseCell('FORMAT: LinkedIn Post\nCONTENT: JCI event announcement — date, venue, what makes it unique\nGOAL: B2B awareness, sponsor interest'), fp: null, ew: parseCell("FORMAT: LinkedIn Post\nCONTENT: 'Event week is here' — what goes into producing a professional grappling event\nGOAL: Credibility, thought leadership"), pe: parseCell('FORMAT: LinkedIn Post\nCONTENT: Post-event metrics recap — impressions, views, attendance, growth\nGOAL: Sponsor reporting, attract future sponsors') },
+    Tuesday:   { std: null, ml: null, eb: null, fp: parseCell('FORMAT: LinkedIn Post\nCONTENT: Event preview — production scope, athlete caliber, media reach\nGOAL: Impress potential sponsors and partners'), ew: null, pe: null },
+    Wednesday: { std: null, ml: parseCell('FORMAT: LinkedIn Post\nCONTENT: Key insight or quote from the episode — framed for professional context\nGOAL: Shares, thought leadership'), eb: null, fp: null, ew: null, pe: null },
+    Thursday:  { std: parseCell('FORMAT: LinkedIn Post\nCONTENT: Event milestone, sponsor partnership announcement, or brand stat\nGOAL: Sponsor visibility, business credibility'), ml: null, eb: parseCell("FORMAT: LinkedIn Post\nCONTENT: Sponsor feature — 'Proud to partner with [Sponsor]' + what the partnership means\nGOAL: Sponsor value, attract future partners"), fp: parseCell("FORMAT: LinkedIn Post\nCONTENT: 'Last opportunity for sponsor visibility at JCI [#]'\nGOAL: Late sponsor outreach, business development"), ew: null, pe: parseCell('FORMAT: LinkedIn Post\nCONTENT: Sponsor thank you + results — what sponsors received\nGOAL: Sponsor retention, relationship building') },
+    Friday:    { std: null, ml: null, eb: null, fp: null, ew: parseCell("FORMAT: LinkedIn Post\nCONTENT: 'Tomorrow: JCI [#]' — event scope, production, livestream link\nGOAL: Final professional awareness push"), pe: null },
+    Saturday:  { std: null, ml: null, eb: null, fp: null, ew: null, pe: null },
+    Sunday:    { std: null, ml: null, eb: null, fp: null, ew: null, pe: null },
+  },
+  'bfbjj': {
+    Monday:    { std: parseCell('FORMAT: Static\nCONTENT: Motivational quote or training philosophy — Jeff Curran or Big Frog brand voice\nGOAL: Brand identity, saves'), ml: parseCell("FORMAT: Static\nCONTENT: 'Jeff Curran: Martial Life — New Episode' — feature the episode from the gym's perspective\nGOAL: Cross-promote JCML to BFBJJ audience"), eb: parseCell("FORMAT: Static\nCONTENT: 'Our team is competing at JCI [#]' — member/affiliate athlete announcement\nGOAL: Community pride, event hype"), fp: null, ew: parseCell("FORMAT: Static\nCONTENT: 'Our athletes are competing THIS WEEK' — tag competitors\nGOAL: Community support, event awareness"), pe: parseCell('FORMAT: Carousel\nCONTENT: Event photos — Big Frog athletes competing and celebrating\nGOAL: Community pride, saves') },
+    Tuesday:   { std: parseCell('FORMAT: Reel\nCONTENT: Member spotlight or training moment — real gym content\nGOAL: Community feel, shares'), ml: null, eb: null, fp: parseCell("FORMAT: Static\nCONTENT: 'Support your teammates — tickets still available for JCI'\nGOAL: Last push to gym community"), ew: null, pe: null },
+    Wednesday: { std: null, ml: parseCell('FORMAT: Reel (clip)\nCONTENT: Episode clip most relevant to BJJ practitioners — technique, mindset, competition\nGOAL: Value-add for members, drive listens'), eb: parseCell("FORMAT: Reel\nCONTENT: Training content tied to JCI prep — 'The team is putting in the work'\nGOAL: Engagement, event storytelling"), fp: null, ew: parseCell('FORMAT: Story\nCONTENT: Behind-the-scenes training clips from event prep week\nGOAL: Authenticity'), pe: parseCell('FORMAT: Reel\nCONTENT: Event highlight reel (BFBJJ athlete focused)\nGOAL: Reach, shares') },
+    Thursday:  { std: parseCell('FORMAT: Static or Carousel\nCONTENT: Class schedule, program promo, or membership CTA\nGOAL: Membership growth'), ml: null, eb: null, fp: parseCell("FORMAT: Story\nCONTENT: Livestream link for members who can't attend in person\nGOAL: Livestream conversions"), ew: null, pe: null },
+    Friday:    { std: parseCell('FORMAT: Reel\nCONTENT: Fun moment, technique highlight, or end-of-week energy\nGOAL: Reach, shares'), ml: parseCell("FORMAT: Story\nCONTENT: 'Listen on the mat? Coach recommends this week's episode' — personal touch\nGOAL: Episode plays, community engagement"), eb: parseCell("FORMAT: Static\nCONTENT: JCI ticket/livestream link — 'Come support your team'\nGOAL: Ticket sales from member base"), fp: null, ew: null, pe: parseCell("FORMAT: Static\nCONTENT: Results graphic — 'Big Frog BJJ at JCI [#]' with placings\nGOAL: Credibility, retention") },
+    Saturday:  { std: parseCell('FORMAT: Story / Reel\nCONTENT: Weekend training energy — open mat, kids class, Saturday vibes\nGOAL: Retention, community'), ml: null, eb: parseCell("FORMAT: Story\nCONTENT: 'Big Frog BJJ x JCI [#]' — team support story with ticket link\nGOAL: Conversions from gym community"), fp: parseCell('FORMAT: Reel\nCONTENT: Pre-event hype reel featuring Big Frog athletes competing\nGOAL: Pride, shares, member retention'), ew: parseCell('FORMAT: Stories (real-time)\nCONTENT: EVENT DAY stories — match updates, results, celebration\nGOAL: Live community engagement, FOMO'), pe: null },
+    Sunday:    { std: null, ml: null, eb: null, fp: null, ew: parseCell("FORMAT: Static or Reel\nCONTENT: 'Proud of our team' post-event celebration\nGOAL: Community warmth, retention"), pe: null },
+  },
+  'ret': {
+    Monday:    { std: parseCell('FORMAT: Static / Photo\nCONTENT: Throwback to a past retreat — scenery, group training, atmosphere\nGOAL: Brand dreaming, saves'), ml: null, eb: parseCell("FORMAT: Static\nCONTENT: Registration open — 'Spots are available for [Retreat Name]'\nGOAL: Registration conversions"), fp: parseCell("FORMAT: Static / Countdown\nCONTENT: 'X days until [Retreat Name]' — location preview, energy\nGOAL: Urgency for last registrations"), ew: parseCell("FORMAT: Static\nCONTENT: 'We're leaving this week!' — countdown, excitement, location reveal\nGOAL: Hype, community"), pe: parseCell("FORMAT: Reel\nCONTENT: Retreat highlight reel — training, scenery, group moments\nGOAL: Viral reach, inspire next year's attendees") },
+    Tuesday:   { std: null, ml: null, eb: null, fp: parseCell("FORMAT: Reel\nCONTENT: 'Here's what you're missing if you don't come'\nGOAL: FOMO-driven conversions"), ew: null, pe: parseCell('FORMAT: Carousel\nCONTENT: Photo dump — real retreat moments, smiling faces, BJJ in paradise\nGOAL: Saves, shares') },
+    Wednesday: { std: null, ml: parseCell("FORMAT: Story / Static\nCONTENT: 'Listen to Jeff on Martial Life this week' — cross-promote to retreat audience\nGOAL: JCML listens from retreat followers"), eb: parseCell("FORMAT: Reel\nCONTENT: 'What to expect' video — destination, training, community\nGOAL: Inspire, reduce hesitation to register"), fp: parseCell("FORMAT: Story\nCONTENT: 'Last call — spots are almost gone'\nGOAL: Final registration push"), ew: parseCell('FORMAT: Story\nCONTENT: Packing, travel prep behind the scenes\nGOAL: Authenticity, excitement'), pe: parseCell("FORMAT: Static\nCONTENT: 'Thank you to our attendees and sponsors' — event recap\nGOAL: Relationship building") },
+    Thursday:  { std: parseCell("FORMAT: Reel or Carousel\nCONTENT: 'What a BJJ retreat looks like' — destination + training lifestyle\nGOAL: Discovery, inspire new attendees"), ml: null, eb: null, fp: parseCell("FORMAT: Carousel\nCONTENT: Logistics info — what to pack, what's included, schedule preview\nGOAL: Reduce friction for undecided attendees"), ew: null, pe: parseCell('FORMAT: Story / Static\nCONTENT: Testimonial graphic or attendee quote\nGOAL: Social proof for next event') },
+    Friday:    { std: null, ml: null, eb: parseCell('FORMAT: Carousel\nCONTENT: Past attendee testimonials and photos\nGOAL: Social proof, conversions'), fp: parseCell("FORMAT: Static\nCONTENT: 'Registration closes [date]' — final graphic\nGOAL: Hard deadline conversion"), ew: parseCell("FORMAT: Reel\nCONTENT: 'We're on our way' — travel day content\nGOAL: Real-time community"), pe: parseCell("FORMAT: Static\nCONTENT: 'Next retreat — [Date/Location TBD] — follow for updates'\nGOAL: Follower retention, build next year's list") },
+    Saturday:  { std: null, ml: null, eb: parseCell("FORMAT: Story\nCONTENT: 'X spots remaining' or 'Early bird ends [date]'\nGOAL: Urgency"), fp: parseCell("FORMAT: Reel\nCONTENT: Best moment from a past retreat — 'This could be you'\nGOAL: Emotional final push"), ew: parseCell('FORMAT: Stories (all day)\nCONTENT: RETREAT DAY 1 — arrivals, first training, group energy\nGOAL: FOMO, real-time community'), pe: null },
+    Sunday:    { std: null, ml: null, eb: parseCell("FORMAT: Static\nCONTENT: Destination photo — 'This is where we're training next'\nGOAL: Dream factor, shares"), fp: parseCell("FORMAT: Story\nCONTENT: Direct link to registration — 'Last chance to join us'\nGOAL: Final conversions"), ew: parseCell('FORMAT: Stories + Reel\nCONTENT: Day 2 retreat content — training, scenery, lifestyle\nGOAL: Ongoing FOMO, engagement'), pe: null },
+  },
+  'tc': {
+    Monday:    { std: null, ml: parseCell("FORMAT: Static\nCONTENT: 'Coach Jeff on Martial Life this month' — personal, gym-voice promotion\nGOAL: JCML episode plays from TC community"), eb: null, fp: null, ew: null, pe: null },
+    Tuesday:   { std: parseCell('FORMAT: Reel or Static\nCONTENT: Training highlight, technique clip, or class moment\nGOAL: Showcase the academy, attract new students'), ml: null, eb: parseCell("FORMAT: Static\nCONTENT: 'Team Curran athletes competing at JCI [#]' — team announcement\nGOAL: Community pride, event awareness"), fp: parseCell("FORMAT: Static\nCONTENT: 'Support Team Curran at JCI — tickets/stream link in bio'\nGOAL: Final community conversion"), ew: parseCell("FORMAT: Static\nCONTENT: 'Our athletes compete THIS week at JCI' — tag competitors\nGOAL: Community support"), pe: parseCell('FORMAT: Carousel\nCONTENT: Event photos — Team Curran athletes in action and celebrating\nGOAL: Community pride, saves') },
+    Wednesday: { std: null, ml: parseCell("FORMAT: Story\nCONTENT: Episode clip or quote shared to stories — 'Listen this week'\nGOAL: Easy cross-promote without disrupting feed"), eb: null, fp: null, ew: null, pe: null },
+    Thursday:  { std: parseCell('FORMAT: Static or Carousel\nCONTENT: Member or athlete spotlight — who trains here and why\nGOAL: Community pride, retention'), ml: null, eb: parseCell("FORMAT: Reel\nCONTENT: Competition prep training footage — 'The work is being put in'\nGOAL: Engagement, storytelling"), fp: null, ew: null, pe: parseCell('FORMAT: Static\nCONTENT: Results graphic — how Team Curran athletes placed at JCI\nGOAL: Credibility, recognition') },
+    Friday:    { std: null, ml: null, eb: null, fp: null, ew: null, pe: null },
+    Saturday:  { std: parseCell('FORMAT: Reel\nCONTENT: Weekend training content — open mat, Saturday class, kids program\nGOAL: Reach, community feel'), ml: null, eb: parseCell("FORMAT: Static\nCONTENT: JCI ticket/stream link — 'Come support your teammates'\nGOAL: Ticket sales from academy community"), fp: parseCell('FORMAT: Reel\nCONTENT: Athlete hype reel for Team Curran competitors\nGOAL: Pride, shares, energy'), ew: parseCell('FORMAT: Story / Reel\nCONTENT: EVENT DAY results and celebration from Team Curran perspective\nGOAL: Real-time community pride'), pe: parseCell("FORMAT: Reel\nCONTENT: Short recap of Team Curran's performance — highlights and thank you\nGOAL: Engagement, retention") },
+    Sunday:    { std: null, ml: null, eb: null, fp: null, ew: parseCell("FORMAT: Static\nCONTENT: 'Proud of our team' — post-event celebration\nGOAL: Retention, warmth"), pe: null },
+  },
+};
+
+let activeAcc = 'jci-yt';
+let activePhase = 'std';
+
+function render() {
+  const acc = ACCOUNTS.find(a => a.id === activeAcc);
+  const phase = PHASES.find(p => p.id === activePhase);
+  const accData = DATA[activeAcc] || {};
+
+  document.getElementById('mainContent').innerHTML = `
+    <div class="account-header">
+      <div class="account-title">${acc.label}</div>
+      <div class="account-desc">${acc.desc}</div>
+    </div>
+    <div class="phase-banner ${phase.cls}">
+      <span class="phase-banner-label">${phase.label}</span>
+      <span class="phase-banner-desc">${phase.desc}</span>
+    </div>
+    <div class="days-grid">
+      ${DAYS.map(day => {
+        const cell = (accData[day] || {})[activePhase];
+        if (!cell) return `<div class="day-card empty"><div class="day-header"><div class="day-name">${day}</div></div><div class="rest-day">No post scheduled this day for this phase.</div></div>`;
+        return `<div class="day-card">
+          <div class="day-header">
+            <div class="day-name">${day}</div>
+            <div class="day-format">${cell.format}</div>
+          </div>
+          <div class="day-body">
+            <div class="day-field" style="grid-column:1/-1">
+              <label>Content</label>
+              <p>${cell.content}</p>
+            </div>
+            <div class="day-field goal">
+              <label>Goal</label>
+              <p>${cell.goal}</p>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// Build account nav
+const accNav = document.getElementById('accountNav');
+ACCOUNTS.forEach(acc => {
+  const btn = document.createElement('button');
+  btn.className = 'acc-btn' + (acc.id === activeAcc ? ' active' : '');
+  btn.textContent = acc.label;
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.acc-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeAcc = acc.id;
+    render();
+  });
+  accNav.appendChild(btn);
+});
+
+// Build phase nav
+const phaseNav = document.getElementById('phaseNav');
+PHASES.forEach(phase => {
+  const btn = document.createElement('button');
+  btn.className = `phase-btn${phase.id === activePhase ? ' active ' + phase.cls : ''}`;
+  btn.textContent = phase.label;
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.phase-btn').forEach(b => { b.classList.remove('active'); PHASES.forEach(p => b.classList.remove(p.cls)); });
+    btn.classList.add('active', phase.cls);
+    activePhase = phase.id;
+    render();
+  });
+  phaseNav.appendChild(btn);
+});
+
+render();
+</script>
+</body>
+</html>

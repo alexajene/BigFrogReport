@@ -31,10 +31,10 @@
 
   .cards {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 24px;
     padding: 56px 48px;
-    max-width: 960px;
+    max-width: 1100px;
     margin: 0 auto;
     width: 100%;
     flex: 1;
@@ -62,6 +62,7 @@
   }
   .card.analytics::before { background: linear-gradient(90deg, var(--accent), var(--accent3)); }
   .card.schedule::before  { background: linear-gradient(90deg, #c084fc, #f76b4f); }
+  .card.playbook::before  { background: linear-gradient(90deg, #4fcfa8, #38bdf8); }
   .card:hover { border-color: rgba(79,142,247,0.4); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
 
   .card-icon { font-size: 32px; }
@@ -75,6 +76,7 @@
     color: var(--accent);
   }
   .card.schedule .card-cta { color: #c084fc; }
+  .card.playbook .card-cta { color: #4fcfa8; }
 
   .footer {
     border-top: 1px solid var(--border);
@@ -127,6 +129,18 @@
       <span class="tag">Filterable</span>
     </div>
     <div class="card-cta">Open Calendar →</div>
+  </a>
+
+  <a class="card playbook" href="content_playbook.html">
+    <div class="card-icon">📋</div>
+    <div class="card-title">Content Playbook</div>
+    <div class="card-desc">Daily posting templates for all 7 accounts across 6 content phases — Standard, Martial Life, Event Build, Final Push, Event Week, and Post-Event. Format, content, and goal for every day.</div>
+    <div class="card-meta">
+      <span class="tag">7 Accounts</span>
+      <span class="tag">6 Phases</span>
+      <span class="tag">Daily Templates</span>
+    </div>
+    <div class="card-cta">Open Playbook →</div>
   </a>
 
 </div>
