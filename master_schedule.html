@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Master Content Calendar — June–December 2026</title>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161a22;
+    --surface2: #1e2330;
+    --border: #2a3044;
+    --accent: #4f8ef7;
+    --text: #e8ecf4;
+    --muted: #7a84a0;
+    --c-jci-yt: #ff6b6b;
+    --c-jci-ig: #c084fc;
+    --c-jci-tt: #fb923c;
+    --c-jci-li: #38bdf8;
+    --c-bfbjj: #4fcfa8;
+    --c-ret: #fbbf24;
+    --c-tc: #f472b6;
+    --phase-std: #3a4055;
+    --phase-ml: #3b2c5e;
+    --phase-eb: #1e3a5f;
+    --phase-fp: #5e2c1e;
+    --phase-ew: #5e1e1e;
+    --phase-pe: #1e4a3a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, #131826 0%, #1a2035 100%); border-bottom: 1px solid var(--border); padding: 36px 48px 30px; }
+  .brand-tag { font-size: 12px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+  .header h1 { font-size: 28px; font-weight: 700; }
+  .header-sub { color: var(--muted); font-size: 14px; margin-top: 6px; }
+
+  /* LEGEND */
+  .legend { display: flex; gap: 10px; padding: 16px 48px; background: var(--surface); border-bottom: 1px solid var(--border); flex-wrap: wrap; align-items: center; }
+  .legend-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; }
+  .phase-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; cursor: default; }
+  .phase-std  { background: var(--phase-std); color: #a0a8c0; }
+  .phase-ml   { background: var(--phase-ml); color: #c084fc; }
+  .phase-eb   { background: var(--phase-eb); color: #38bdf8; }
+  .phase-fp   { background: var(--phase-fp); color: #fb923c; }
+  .phase-ew   { background: var(--phase-ew); color: #f87171; }
+  .phase-pe   { background: var(--phase-pe); color: #4fcfa8; }
+
+  /* FILTERS */
+  .filters { display: flex; gap: 8px; padding: 16px 48px; background: var(--bg); border-bottom: 1px solid var(--border); flex-wrap: wrap; align-items: center; }
+  .filter-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-right: 4px; }
+  .filter-btn { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid transparent; cursor: pointer; transition: all 0.15s; background: var(--surface2); color: var(--muted); }
+  .filter-btn.active { color: #fff; }
+  .filter-btn[data-brand="all"].active { background: var(--accent); border-color: var(--accent); }
+  .filter-btn[data-brand="jci-yt"].active  { background: var(--c-jci-yt); border-color: var(--c-jci-yt); color: #fff; }
+  .filter-btn[data-brand="jci-ig"].active  { background: var(--c-jci-ig); border-color: var(--c-jci-ig); color: #fff; }
+  .filter-btn[data-brand="jci-tt"].active  { background: var(--c-jci-tt); border-color: var(--c-jci-tt); color: #111; }
+  .filter-btn[data-brand="jci-li"].active  { background: var(--c-jci-li); border-color: var(--c-jci-li); color: #111; }
+  .filter-btn[data-brand="bfbjj"].active   { background: var(--c-bfbjj); border-color: var(--c-bfbjj); color: #111; }
+  .filter-btn[data-brand="ret"].active     { background: var(--c-ret); border-color: var(--c-ret); color: #111; }
+  .filter-btn[data-brand="tc"].active      { background: var(--c-tc); border-color: var(--c-tc); color: #fff; }
+
+  /* MONTH NAV */
+  .month-nav { display: flex; gap: 4px; padding: 12px 48px; background: var(--bg); border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .month-btn { padding: 5px 16px; border-radius: 6px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); cursor: pointer; background: var(--surface); color: var(--muted); transition: all 0.15s; }
+  .month-btn:hover, .month-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* CONTENT */
+  .content { padding: 32px 48px 64px; }
+
+  /* MONTH SECTION */
+  .month-section { margin-bottom: 48px; }
+  .month-header { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid var(--border); display: flex; align-items: center; gap: 12px; }
+  .month-count { font-size: 12px; color: var(--muted); font-weight: 400; }
+
+  /* WEEK CARD */
+  .week-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+  .week-header { display: flex; align-items: center; gap: 16px; padding: 14px 20px; cursor: pointer; user-select: none; transition: background 0.15s; }
+  .week-header:hover { background: var(--surface2); }
+  .week-date { font-size: 13px; font-weight: 700; color: var(--text); min-width: 140px; }
+  .week-events { font-size: 12px; color: var(--muted); flex: 1; }
+  .week-event-tag { display: inline-block; background: var(--surface2); border: 1px solid var(--border); border-radius: 4px; padding: 2px 8px; margin: 2px 3px 2px 0; font-size: 11px; color: var(--text); }
+  .week-toggle { font-size: 18px; color: var(--muted); transition: transform 0.2s; margin-left: auto; }
+  .week-card.open .week-toggle { transform: rotate(180deg); }
+  .week-body { display: none; padding: 0 20px 20px; }
+  .week-card.open .week-body { display: block; }
+
+  /* BRAND ROWS */
+  .brand-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 4px; }
+  .brand-block { border-radius: 8px; padding: 12px 14px; border-left: 3px solid transparent; }
+  .brand-block[data-brand="jci-yt"] { background: rgba(255,107,107,0.07); border-color: var(--c-jci-yt); }
+  .brand-block[data-brand="jci-ig"] { background: rgba(192,132,252,0.07); border-color: var(--c-jci-ig); }
+  .brand-block[data-brand="jci-tt"] { background: rgba(251,146,60,0.07); border-color: var(--c-jci-tt); }
+  .brand-block[data-brand="jci-li"] { background: rgba(56,189,248,0.07); border-color: var(--c-jci-li); }
+  .brand-block[data-brand="bfbjj"]  { background: rgba(79,207,168,0.07); border-color: var(--c-bfbjj); }
+  .brand-block[data-brand="ret"]    { background: rgba(251,191,36,0.07); border-color: var(--c-ret); }
+  .brand-block[data-brand="tc"]     { background: rgba(244,114,182,0.07); border-color: var(--c-tc); }
+  .brand-name { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .brand-block[data-brand="jci-yt"] .brand-name { color: var(--c-jci-yt); }
+  .brand-block[data-brand="jci-ig"] .brand-name { color: var(--c-jci-ig); }
+  .brand-block[data-brand="jci-tt"] .brand-name { color: var(--c-jci-tt); }
+  .brand-block[data-brand="jci-li"] .brand-name { color: var(--c-jci-li); }
+  .brand-block[data-brand="bfbjj"]  .brand-name { color: var(--c-bfbjj); }
+  .brand-block[data-brand="ret"]    .brand-name { color: var(--c-ret); }
+  .brand-block[data-brand="tc"]     .brand-name { color: var(--c-tc); }
+  .brand-phase { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; margin-bottom: 8px; }
+  .deliverable-list { list-style: none; }
+  .deliverable-list li { font-size: 12px; color: var(--muted); padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,0.04); display: flex; gap: 6px; line-height: 1.4; }
+  .deliverable-list li:last-child { border-bottom: none; }
+  .deliverable-list li::before { content: '→'; color: rgba(255,255,255,0.2); flex-shrink: 0; }
+  .deliverable-list li strong { color: var(--text); }
+
+  /* NOTES */
+  .week-notes { margin-top: 12px; background: rgba(79,142,247,0.06); border: 1px solid rgba(79,142,247,0.2); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--muted); }
+  .week-notes span { color: var(--accent); font-weight: 600; }
+
+  /* FOOTER */
+  .footer { border-top: 1px solid var(--border); padding: 20px 48px; color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+  @media (max-width: 768px) {
+    .header, .filters, .month-nav, .content, .footer, .legend { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="brand-tag">Director of Marketing, Media &amp; Events</div>
+  <h1>Master Content Calendar — June through December 2026</h1>
+  <div class="header-sub">Jeff Curran Invitational · @BigFrogBJJ · Big Frog BJJ Retreats · Team Curran · Martial Life</div>
+</div>
+
+<div class="legend">
+  <span class="legend-label">Phase:</span>
+  <span class="phase-badge phase-std">Standard</span>
+  <span class="phase-badge phase-ml">🎙 Martial Life</span>
+  <span class="phase-badge phase-eb">⚙ Event Build</span>
+  <span class="phase-badge phase-fp">🔥 Final Push</span>
+  <span class="phase-badge phase-ew">🥋 Event Week</span>
+  <span class="phase-badge phase-pe">📸 Post-Event</span>
+</div>
+
+<div class="filters">
+  <span class="filter-label">Brand:</span>
+  <button class="filter-btn active" data-brand="all">All Brands</button>
+  <button class="filter-btn" data-brand="jci-yt">JCI YouTube</button>
+  <button class="filter-btn" data-brand="jci-ig">JCI Instagram</button>
+  <button class="filter-btn" data-brand="jci-tt">JCI TikTok</button>
+  <button class="filter-btn" data-brand="jci-li">JCI LinkedIn</button>
+  <button class="filter-btn" data-brand="bfbjj">@BigFrogBJJ</button>
+  <button class="filter-btn" data-brand="ret">BFBJJ Retreats</button>
+  <button class="filter-btn" data-brand="tc">Team Curran</button>
+</div>
+
+<div class="month-nav">
+  <button class="month-btn active" data-month="june">June</button>
+  <button class="month-btn" data-month="july">July</button>
+  <button class="month-btn" data-month="august">August</button>
+  <button class="month-btn" data-month="september">September</button>
+  <button class="month-btn" data-month="october">October</button>
+  <button class="month-btn" data-month="november">November</button>
+  <button class="month-btn" data-month="december">December</button>
+</div>
+
+<div class="content" id="calendar"></div>
+
+<div class="footer">
+  <span>Master Content Calendar · Jeff Curran Ecosystem · June–December 2026</span>
+  <span>Director of Marketing, Media &amp; Events</span>
+</div>
+
+<script>
+const BRANDS = [
+  { key: 'jci-yt', label: 'JCI YouTube' },
+  { key: 'jci-ig', label: 'JCI Instagram' },
+  { key: 'jci-tt', label: 'JCI TikTok' },
+  { key: 'jci-li', label: 'JCI LinkedIn' },
+  { key: 'bfbjj',  label: '@BigFrogBJJ' },
+  { key: 'ret',    label: 'BFBJJ Retreats' },
+  { key: 'tc',     label: 'Team Curran' },
+];
+
+function phaseClass(text) {
+  if (text.includes('MARTIAL LIFE')) return 'phase-ml';
+  if (text.includes('EVENT BUILD')) return 'phase-eb';
+  if (text.includes('FINAL PUSH')) return 'phase-fp';
+  if (text.includes('EVENT WEEK')) return 'phase-ew';
+  if (text.includes('POST-EVENT')) return 'phase-pe';
+  return 'phase-std';
+}
+function phaseLabel(text) {
+  if (text.includes('MARTIAL LIFE')) return '🎙 Martial Life';
+  if (text.includes('EVENT BUILD')) return '⚙ Event Build';
+  if (text.includes('FINAL PUSH')) return '🔥 Final Push';
+  if (text.includes('EVENT WEEK')) return '🥋 Event Week';
+  if (text.includes('POST-EVENT')) return '📸 Post-Event';
+  return 'Standard';
+}
+
+const DATA = [
+  { month: 'june', date: 'Jun 1 – Jun 7', events: ['🎙 Martial Life Ep 6 releases', '🥋 Team at Fuji Barrington'], notes: 'Ep 6 drops — schedule all clips this week',
+    deliverables: {
+      'jci-yt': ['📅 EPISODE DROP (full upload)', 'Short Clip 1 — best moment', 'Short Clip 2 — Wed/Thu', 'Short Clip 3 — weekend'],
+      'jci-ig': ['Episode drop graphic + Story link', 'Episode Reel clip', 'Quote card from episode'],
+      'jci-tt': ['Episode teaser clip (hook in 3s)', 'Second clip mid-week', 'Quote/reaction overlay'],
+      'jci-li': ['Episode post (professional angle)', 'Key insight quote from episode'],
+      'bfbjj':  ["'New episode' Static (JCML)", 'Episode clip Reel (BJJ-relevant)', "Story: 'Listen this week'"],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ["'Coach Jeff on Martial Life' Static", 'Story: episode clip share'],
+    }
+  },
+  { month: 'june', date: 'Jun 8 – Jun 14', events: ["👩 Women's Open Mat (2pm)"], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'june', date: 'Jun 15 – Jun 21', events: ["👨 Father's Day Open Mat"], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'june', date: 'Jun 22 – Jun 28', events: ['🏆 Haanpaa Summer Bash & Seminar'], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'june', date: 'Jun 29 – Jul 5', events: ['🎙 Martial Life Ep 7 releases'], notes: 'Ep 7 drops — schedule all clips this week',
+    deliverables: {
+      'jci-yt': ['📅 EPISODE DROP (full upload)', 'Short Clip 1 — best moment', 'Short Clip 2 — Wed/Thu', 'Short Clip 3 — weekend'],
+      'jci-ig': ['Episode drop graphic + Story link', 'Episode Reel clip', 'Quote card from episode'],
+      'jci-tt': ['Episode teaser clip (hook in 3s)', 'Second clip mid-week', 'Quote/reaction overlay'],
+      'jci-li': ['Episode post (professional angle)', 'Key insight quote from episode'],
+      'bfbjj':  ["'New episode' Static (JCML)", 'Episode clip Reel (BJJ-relevant)', "Story: 'Listen this week'"],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ["'Coach Jeff on Martial Life' Static", 'Story: episode clip share'],
+    }
+  },
+  { month: 'july', date: 'Jul 6 – Jul 12', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'july', date: 'Jul 13 – Jul 19', events: ['🏕 TRAIN HIGH CAMP & SUPERFIGHTS'], notes: 'BFRET: on-site content daily',
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ["🥋 'We're here!' arrival content", 'Daily Stories (training, scenery)', 'Lifestyle + BJJ in paradise content'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'july', date: 'Jul 20 – Jul 26', events: ["👩 Women's Open Mat (2pm)"], notes: 'JCI 4 build begins — launch athlete reveals',
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['📸 Highlight Reel', 'Photo dump Carousel', 'Testimonial graphic', "'Next retreat — follow for updates'"],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'july', date: 'Jul 27 – Aug 2', events: ['🎙 Martial Life Ep 8 releases'], notes: 'Ep 8 drops — schedule all clips this week',
+    deliverables: {
+      'jci-yt': ['📅 EPISODE DROP (full upload)', 'Short Clip 1 — best moment', 'Short Clip 2 — Wed/Thu', 'Short Clip 3 — weekend'],
+      'jci-ig': ['Episode drop graphic + Story link', 'Episode Reel clip', 'Quote card from episode'],
+      'jci-tt': ['Episode teaser clip (hook in 3s)', 'Second clip mid-week', 'Quote/reaction overlay'],
+      'jci-li': ['Episode post (professional angle)', 'Key insight quote from episode'],
+      'bfbjj':  ["'New episode' Static (JCML)", 'Episode clip Reel (BJJ-relevant)', "Story: 'Listen this week'"],
+      'ret':    ['Story: cross-promote JCML episode'],
+      'tc':     ["'Coach Jeff on Martial Life' Static", 'Story: episode clip share'],
+    }
+  },
+  { month: 'august', date: 'Aug 3 – Aug 9', events: ["👩 Women's Open Mat (2pm)"], notes: null,
+    deliverables: {
+      'jci-yt': ['⚙ Match clip from past JCI event', "'X weeks to JCI 4' countdown Short", 'Title match preview (if announced)', 'Promo Short — ticket CTA'],
+      'jci-ig': ['⚙ Athlete announcement graphic', 'Event hype Reel', 'Lineup/ticket static + Story'],
+      'jci-tt': ["⚙ Athlete hype clip", "'X weeks out' countdown video", 'Event venue/production preview'],
+      'jci-li': ['⚙ Event announcement post', 'Sponsor feature / partnership'],
+      'bfbjj':  ["⚙ 'Our team competes at JCI 4' Static", 'Training prep Reel', 'Ticket CTA + Story link'],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ["⚙ 'Team competes at JCI 4' Static", 'Competition prep training Reel'],
+    }
+  },
+  { month: 'august', date: 'Aug 10 – Aug 16', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ["⚙ Match clip from past JCI event", "'X weeks to JCI 4' countdown Short", 'Title match preview', 'Promo Short — ticket CTA'],
+      'jci-ig': ['⚙ Athlete announcement graphic', 'Event hype Reel', 'Lineup/ticket static + Story'],
+      'jci-tt': ["⚙ Athlete hype clip", "'X weeks out' countdown video", 'Event venue/production preview'],
+      'jci-li': ['⚙ Event announcement post', 'Sponsor feature / partnership'],
+      'bfbjj':  ["⚙ 'Our team competes at JCI 4' Static", 'Training prep Reel', 'Ticket CTA + Story link'],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ["⚙ 'Team competes at JCI 4' Static", 'Competition prep training Reel'],
+    }
+  },
+  { month: 'august', date: 'Aug 17 – Aug 23', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ["⚙ Match clip from past JCI event", "'X weeks to JCI 4' countdown Short", 'Title match preview', 'Promo Short — ticket CTA'],
+      'jci-ig': ['⚙ Athlete announcement graphic', 'Event hype Reel', 'Lineup/ticket static + Story'],
+      'jci-tt': ["⚙ Athlete hype clip", "'X weeks out' countdown video", 'Event venue/production preview'],
+      'jci-li': ['⚙ Event announcement post', 'Sponsor feature / partnership'],
+      'bfbjj':  ["⚙ 'Our team competes at JCI 4' Static", 'Training prep Reel', 'Ticket CTA + Story link'],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ["⚙ 'Team competes at JCI 4' Static", 'Competition prep training Reel'],
+    }
+  },
+  { month: 'august', date: 'Aug 24 – Aug 30', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ["⚙ Match clip from past JCI event", "'X weeks to JCI 4' countdown Short", 'Title match preview', 'Promo Short — ticket CTA'],
+      'jci-ig': ['⚙ Athlete announcement graphic', 'Event hype Reel', 'Lineup/ticket static + Story'],
+      'jci-tt': ["⚙ Athlete hype clip", "'X weeks out' countdown video", 'Event venue/production preview'],
+      'jci-li': ['⚙ Event announcement post', 'Sponsor feature / partnership'],
+      'bfbjj':  ["⚙ 'Our team competes at JCI 4' Static", 'Training prep Reel', 'Ticket CTA + Story link'],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ["⚙ 'Team competes at JCI 4' Static", 'Competition prep training Reel'],
+    }
+  },
+  { month: 'august', date: 'Aug 31 – Sep 6', events: ['🎙 Martial Life Ep 9 releases'], notes: 'Ep 9 drops — schedule all clips this week',
+    deliverables: {
+      'jci-yt': ['📅 EPISODE DROP (full upload)', 'Short Clip 1 — best moment', 'Short Clip 2 — Wed/Thu', 'Short Clip 3 — weekend'],
+      'jci-ig': ['Episode drop graphic + Story link', 'Episode Reel clip', 'Quote card from episode'],
+      'jci-tt': ['Episode teaser clip (hook in 3s)', 'Second clip mid-week', 'Quote/reaction overlay'],
+      'jci-li': ['Episode post (professional angle)', 'Key insight quote from episode'],
+      'bfbjj':  ["'New episode' Static (JCML)", 'Episode clip Reel (BJJ-relevant)', "Story: 'Listen this week'"],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ["'Coach Jeff on Martial Life' Static", 'Story: episode clip share'],
+    }
+  },
+  { month: 'september', date: 'Sep 7 – Sep 13', events: ["👩 Women's Open Mat (2pm)"], notes: null,
+    deliverables: {
+      'jci-yt': ["⚙ Match clip from past JCI event", "'X weeks to JCI 4' countdown Short", 'Title match preview', 'Promo Short — ticket CTA'],
+      'jci-ig': ['⚙ Athlete announcement graphic', 'Event hype Reel', 'Lineup/ticket static + Story'],
+      'jci-tt': ["⚙ Athlete hype clip", "'X weeks out' countdown video", 'Event venue/production preview'],
+      'jci-li': ['⚙ Event announcement post', 'Sponsor feature / partnership'],
+      'bfbjj':  ["⚙ 'Our team competes at JCI 4' Static", 'Training prep Reel', 'Ticket CTA + Story link'],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ["⚙ 'Team competes at JCI 4' Static", 'Competition prep training Reel'],
+    }
+  },
+  { month: 'september', date: 'Sep 14 – Sep 20', events: ['🥋 JCI 4 — THE CRUCIBLE', '🌽 Curran Affiliate Day / Corn Roast'], notes: 'All hands — real-time coverage on event day',
+    deliverables: {
+      'jci-yt': ['🥋 Daily countdown Shorts', '🥋 EVENT DAY — livestream + same-day match clip', 'Sponsored preshow content upload'],
+      'jci-ig': ['🥋 Daily countdown graphics', 'Sponsored preshow Stories', 'Event-day Stories real-time', 'Best match clip Reel (next day)'],
+      'jci-tt': ['🥋 Daily hype clips', 'Event day — same-day turnaround', 'Best finish clip'],
+      'jci-li': ["🥋 'Event week is here' post", 'Event day post with livestream link'],
+      'bfbjj':  ["🥋 'Athletes compete this week' Static", 'Event-day Stories (real-time)', 'Post-event pride Static'],
+      'ret':    ['Registration open / spots CTA', "'What to expect' Reel", 'Testimonial carousel', "'X spots left' Story"],
+      'tc':     ["🥋 'Athletes compete THIS week' Static", 'Event-day results + celebration'],
+    }
+  },
+  { month: 'september', date: 'Sep 21 – Sep 27', events: ['🌊 EMERALD COAST EXPERIENCE 2'], notes: 'Priority: edit + publish highlight reel to YT · BFRET: on-site content daily',
+    deliverables: {
+      'jci-yt': ['📸 SOTN #1 Short (Mon)', 'SOTN #2 Short (Tue)', 'SOTN #3 + MOTN clip (Wed)', 'Full highlight reel (3–5 days)', 'Title match replay + event VOD'],
+      'jci-ig': ['📸 SOTN #1 Reel (Mon)', 'SOTN #2 + #3 Reels (Tue–Wed)', 'MOTN graphic (Wed)', 'Photo carousel + stats graphic', 'Thank you + Next JCI teaser'],
+      'jci-tt': ['📸 SOTN #1 clip (Mon)', 'SOTN #2 + #3 (Tue–Wed)', 'MOTN clip', 'Atmosphere/crowd clip'],
+      'jci-li': ['📸 Post-event metrics recap', 'Sponsor thank you + results'],
+      'bfbjj':  ['📸 Team photo carousel', 'Highlight Reel (BFBJJ athletes)', 'Results graphic'],
+      'ret':    ["🥋 'We're here!' arrival content", 'Daily Stories (training, scenery)', 'Lifestyle + BJJ in paradise content'],
+      'tc':     ['📸 Event photo carousel', 'Results graphic'],
+    }
+  },
+  { month: 'september', date: 'Sep 28 – Oct 4', events: ['🎙 Martial Life Ep 10 releases'], notes: 'Ep 10 drops — schedule all clips this week',
+    deliverables: {
+      'jci-yt': ['📅 EPISODE DROP (full upload)', 'Short Clip 1 — best moment', 'Short Clip 2 — Wed/Thu', 'Short Clip 3 — weekend'],
+      'jci-ig': ['Episode drop graphic + Story link', 'Episode Reel clip', 'Quote card from episode'],
+      'jci-tt': ['Episode teaser clip (hook in 3s)', 'Second clip mid-week', 'Quote/reaction overlay'],
+      'jci-li': ['Episode post (professional angle)', 'Key insight quote from episode'],
+      'bfbjj':  ["'New episode' Static (JCML)", 'Episode clip Reel (BJJ-relevant)', "Story: 'Listen this week'"],
+      'ret':    ['📸 Highlight Reel', 'Photo dump Carousel', 'Testimonial graphic', "'Next retreat — follow for updates'"],
+      'tc':     ["'Coach Jeff on Martial Life' Static", 'Story: episode clip share'],
+    }
+  },
+  { month: 'october', date: 'Oct 5 – Oct 11', events: ["👩 Women's Open Mat (2pm)"], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'october', date: 'Oct 12 – Oct 18', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'october', date: 'Oct 19 – Oct 25', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'october', date: 'Oct 26 – Nov 1', events: ['🎙 Martial Life Ep 11 releases'], notes: 'Ep 11 drops — schedule all clips this week',
+    deliverables: {
+      'jci-yt': ['📅 EPISODE DROP (full upload)', 'Short Clip 1 — best moment', 'Short Clip 2 — Wed/Thu', 'Short Clip 3 — weekend'],
+      'jci-ig': ['Episode drop graphic + Story link', 'Episode Reel clip', 'Quote card from episode'],
+      'jci-tt': ['Episode teaser clip (hook in 3s)', 'Second clip mid-week', 'Quote/reaction overlay'],
+      'jci-li': ['Episode post (professional angle)', 'Key insight quote from episode'],
+      'bfbjj':  ["'New episode' Static (JCML)", 'Episode clip Reel (BJJ-relevant)', "Story: 'Listen this week'"],
+      'ret':    ['Story: cross-promote JCML episode'],
+      'tc':     ["'Coach Jeff on Martial Life' Static", 'Story: episode clip share'],
+    }
+  },
+  { month: 'november', date: 'Nov 2 – Nov 8', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'november', date: 'Nov 9 – Nov 15', events: ["👩 Women's Open Mat (2pm)"], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'november', date: 'Nov 16 – Nov 22', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'november', date: 'Nov 23 – Nov 29', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'november', date: 'Nov 30 – Dec 6', events: ['🎙 Martial Life Ep 12 releases'], notes: 'Ep 12 drops — schedule all clips this week',
+    deliverables: {
+      'jci-yt': ['📅 EPISODE DROP (full upload)', 'Short Clip 1 — best moment', 'Short Clip 2 — Wed/Thu', 'Short Clip 3 — weekend'],
+      'jci-ig': ['Episode drop graphic + Story link', 'Episode Reel clip', 'Quote card from episode'],
+      'jci-tt': ['Episode teaser clip (hook in 3s)', 'Second clip mid-week', 'Quote/reaction overlay'],
+      'jci-li': ['Episode post (professional angle)', 'Key insight quote from episode'],
+      'bfbjj':  ["'New episode' Static (JCML)", 'Episode clip Reel (BJJ-relevant)', "Story: 'Listen this week'"],
+      'ret':    ['Story: cross-promote JCML episode'],
+      'tc':     ["'Coach Jeff on Martial Life' Static", 'Story: episode clip share'],
+    }
+  },
+  { month: 'december', date: 'Dec 7 – Dec 13', events: ["👩 Women's Open Mat (2pm)"], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'december', date: 'Dec 14 – Dec 20', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'december', date: 'Dec 21 – Dec 27', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+  { month: 'december', date: 'Dec 28 – Jan 3', events: ['—'], notes: null,
+    deliverables: {
+      'jci-yt': ['Match clip from JCI 1/2/3 archive', 'JCML episode Short clip (mid-week)', 'Long-form: Top matches compilation'],
+      'jci-ig': ['Match highlight Reel', 'Throwback graphic or athlete stat', "Story: poll or 'who wins?'"],
+      'jci-tt': ['Match clip (30–60s)', 'JCML repurposed clip', 'Throwback JCI highlight'],
+      'jci-li': ['Industry/grappling growth post', 'Event milestone or stat'],
+      'bfbjj':  ['Training tip or technique Reel', 'Member spotlight Static', 'Class schedule / program CTA', 'Weekend training Story'],
+      'ret':    ['Past retreat throwback photo', 'Destination lifestyle Reel'],
+      'tc':     ['Training highlight Reel', 'Member / athlete spotlight', 'Weekend open mat content'],
+    }
+  },
+];
+
+const MONTHS = ['june','july','august','september','october','november','december'];
+const MONTH_LABELS = { june:'June 2026', july:'July 2026', august:'August 2026', september:'September 2026', october:'October 2026', november:'November 2026', december:'December 2026' };
+
+let activeBrand = 'all';
+let activeMonth = 'june';
+
+function render() {
+  const cal = document.getElementById('calendar');
+  cal.innerHTML = '';
+  const months = activeMonth === 'all' ? MONTHS : [activeMonth];
+  months.forEach(month => {
+    const weeks = DATA.filter(w => w.month === month);
+    if (!weeks.length) return;
+    const sec = document.createElement('div');
+    sec.className = 'month-section';
+    sec.innerHTML = `<div class="month-header">${MONTH_LABELS[month]} <span class="month-count">${weeks.length} weeks</span></div>`;
+    weeks.forEach((week, wi) => {
+      const card = document.createElement('div');
+      card.className = 'week-card';
+      const eventsHtml = week.events.map(e => e === '—' ? '' : `<span class="week-event-tag">${e}</span>`).join('');
+      card.innerHTML = `
+        <div class="week-header">
+          <div class="week-date">${week.date}</div>
+          <div class="week-events">${eventsHtml || '<span style="color:var(--muted);font-size:12px;">Standard week</span>'}</div>
+          <div class="week-toggle">▾</div>
+        </div>
+        <div class="week-body"></div>`;
+      // build body
+      const body = card.querySelector('.week-body');
+      const brands = activeBrand === 'all' ? BRANDS : BRANDS.filter(b => b.key === activeBrand);
+      const grid = document.createElement('div');
+      grid.className = 'brand-grid';
+      brands.forEach(brand => {
+        const items = week.deliverables[brand.key] || [];
+        if (!items.length) return;
+        const phase = phaseLabel(items.join(' ') + (week.events.join(' ')));
+        const pClass = phaseClass(items.join(' ') + week.events.join(' '));
+        const block = document.createElement('div');
+        block.className = 'brand-block';
+        block.dataset.brand = brand.key;
+        block.innerHTML = `
+          <div class="brand-name">${brand.label}</div>
+          <span class="brand-phase phase-badge ${pClass}">${phase}</span>
+          <ul class="deliverable-list">
+            ${items.map(i => `<li>${i}</li>`).join('')}
+          </ul>`;
+        grid.appendChild(block);
+      });
+      body.appendChild(grid);
+      if (week.notes) {
+        const note = document.createElement('div');
+        note.className = 'week-notes';
+        note.innerHTML = `<span>📌 Note:</span> ${week.notes}`;
+        body.appendChild(note);
+      }
+      // toggle
+      card.querySelector('.week-header').addEventListener('click', () => {
+        card.classList.toggle('open');
+      });
+      // auto-open first week of active month
+      if (wi === 0) card.classList.add('open');
+      sec.appendChild(card);
+    });
+    cal.appendChild(sec);
+  });
+}
+
+// Brand filter
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeBrand = btn.dataset.brand;
+    render();
+  });
+});
+
+// Month nav
+document.querySelectorAll('.month-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.month-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeMonth = btn.dataset.month;
+    render();
+    window.scrollTo({ top: document.querySelector('.content').offsetTop - 20, behavior: 'smooth' });
+  });
+});
+
+render();
+</script>
+</body>
+</html>

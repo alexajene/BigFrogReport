@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Media Analytics Report</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161a22;
+    --surface2: #1e2330;
+    --border: #2a3044;
+    --accent: #4f8ef7;
+    --accent2: #f76b4f;
+    --accent3: #4fcfa8;
+    --accent4: #c084fc;
+    --accent5: #fbbf24;
+    --text: #e8ecf4;
+    --muted: #7a84a0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+
+  /* HEADER */
+  .header { background: linear-gradient(135deg, #131826 0%, #1a2035 100%); border-bottom: 1px solid var(--border); padding: 40px 48px 36px; }
+  .header-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+  .brand { font-size: 12px; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+  .report-title { font-size: 32px; font-weight: 700; line-height: 1.2; }
+  .report-subtitle { color: var(--muted); font-size: 15px; margin-top: 6px; }
+  .report-meta { color: var(--muted); font-size: 13px; margin-top: 4px; }
+  .report-date { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 20px; font-size: 13px; color: var(--muted); white-space: nowrap; text-align: right; }
+  .report-date strong { display: block; color: var(--text); font-size: 15px; margin-top: 2px; }
+
+  /* EXEC SUMMARY */
+  .exec-summary { background: linear-gradient(135deg, rgba(79,142,247,0.06), rgba(79,207,168,0.04)); border-bottom: 1px solid var(--border); padding: 28px 48px; }
+  .exec-summary p { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 900px; }
+  .exec-summary strong { color: var(--text); }
+
+  /* KPI ROW */
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; padding: 32px 48px 0; }
+  .kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; position: relative; overflow: hidden; }
+  .kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .kpi.blue::before { background: var(--accent); }
+  .kpi.orange::before { background: var(--accent2); }
+  .kpi.green::before { background: var(--accent3); }
+  .kpi.purple::before { background: var(--accent4); }
+  .kpi.yellow::before { background: var(--accent5); }
+  .kpi-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .kpi-value { font-size: 26px; font-weight: 700; line-height: 1; }
+  .kpi-delta { font-size: 12px; margin-top: 6px; }
+  .kpi-delta.up { color: var(--accent3); }
+  .kpi-delta.new { color: var(--accent4); }
+
+  /* CONTENT */
+  .content { padding: 32px 48px 48px; }
+  .section { margin-bottom: 44px; }
+  .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+  .section-num { background: var(--accent); color: #fff; font-size: 11px; font-weight: 700; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .section-num.orange { background: var(--accent2); }
+  .section-num.green { background: var(--accent3); color: #0d0f14; }
+  .section-num.purple { background: var(--accent4); }
+  .section-num.yellow { background: var(--accent5); color: #0d0f14; }
+  .section-title { font-size: 18px; font-weight: 600; }
+  .section-desc { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 28px 28px 20px; }
+  .chart-wrap canvas { max-height: 300px; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 960px) { .two-col, .three-col { grid-template-columns: 1fr; } }
+
+  /* TABLES */
+  .table-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  thead tr { background: var(--surface2); }
+  th { padding: 13px 18px; text-align: left; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  th:not(:first-child) { text-align: right; }
+  td { padding: 12px 18px; border-top: 1px solid var(--border); }
+  td:not(:first-child) { text-align: right; }
+  tr:hover td { background: var(--surface2); }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .badge.green { background: rgba(79,207,168,0.15); color: var(--accent3); }
+  .badge.blue { background: rgba(79,142,247,0.15); color: var(--accent); }
+  .badge.purple { background: rgba(192,132,252,0.15); color: var(--accent4); }
+  .badge.yellow { background: rgba(251,191,36,0.15); color: var(--accent5); }
+  td strong { color: var(--text); }
+
+  /* GROWTH CALLOUT CARDS */
+  .growth-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 800px) { .growth-cards { grid-template-columns: 1fr; } }
+  .growth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px 22px; text-align: center; }
+  .growth-card .arrow { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .growth-card .pct { font-size: 42px; font-weight: 800; color: var(--accent3); line-height: 1; }
+  .growth-card .detail { font-size: 13px; color: var(--muted); margin-top: 8px; line-height: 1.5; }
+
+  /* PROPERTY CARDS */
+  .prop-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+  .prop-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+  .prop-card .prop-name { font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+  .prop-stat { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .prop-stat:last-child { border-bottom: none; }
+  .prop-stat .label { font-size: 13px; color: var(--muted); }
+  .prop-stat .val { font-size: 15px; font-weight: 600; color: var(--text); }
+  .prop-stat .val.up { color: var(--accent3); }
+
+  /* CALLOUT */
+  .callout { background: linear-gradient(135deg, rgba(79,142,247,0.08), rgba(79,207,168,0.06)); border: 1px solid rgba(79,142,247,0.25); border-radius: 14px; padding: 24px 28px; display: flex; align-items: center; gap: 24px; flex-wrap: wrap; margin-bottom: 32px; }
+  .callout-icon { font-size: 36px; flex-shrink: 0; }
+  .callout-text h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+  .callout-text p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .callout-stat { margin-left: auto; text-align: right; }
+  .callout-stat .big { font-size: 36px; font-weight: 800; color: var(--accent); }
+  .callout-stat .label { font-size: 12px; color: var(--muted); }
+
+  /* FOOTER */
+  .footer { border-top: 1px solid var(--border); padding: 24px 48px; display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 12px; flex-wrap: wrap; gap: 12px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <div class="brand">Director of Marketing, Media &amp; Events — Annual Performance Report</div>
+      <div class="report-title">Jeff Curran Media Ecosystem</div>
+      <div class="report-subtitle">Jeff Curran Invitational · @BigFrogBJJ · Team Curran · Big Frog BJJ Retreats</div>
+      <div class="report-meta">Reporting Period: September 2025 – May 2026</div>
+    </div>
+    <div class="report-date">
+      Report Period<br>
+      <strong>Sep 2025 – May 2026</strong>
+    </div>
+  </div>
+</div>
+
+<!-- EXEC SUMMARY -->
+<div class="exec-summary">
+  <p>Over the last year, media, marketing, content production, event promotion, and digital audience development efforts have transformed the Jeff "Big Frog" Curran brand ecosystem from a collection of independent properties into an <strong>integrated media network</strong>. All properties — the Jeff Curran Invitational, Big Frog BJJ gym, Team Curran, and Big Frog BJJ Retreats — operate under the Jeff Curran umbrella, with <strong>@BigFrogBJJ serving as Jeff's personal Instagram</strong> and primary reach driver. YouTube spans two content pillars: <strong>JCI event coverage</strong> and the <strong>Jeff Curran: Martial Life documentary series</strong>. Across three JCI event cycles, combined peak reach increased from approximately <strong>594,000 to more than 1.77 million impressions</strong> per event cycle — <strong>nearly tripling in less than one year</strong>.</p>
+</div>
+
+<!-- KPI ROW -->
+<div class="kpi-row">
+  <div class="kpi blue">
+    <div class="kpi-label">JCI Instagram</div>
+    <div class="kpi-value">1,946</div>
+    <div class="kpi-delta up">↑ +205% from 638</div>
+  </div>
+  <div class="kpi orange">
+    <div class="kpi-label">YouTube Subscribers</div>
+    <div class="kpi-value">1,488</div>
+    <div class="kpi-delta up">↑ +2,465% from 58</div>
+  </div>
+  <div class="kpi purple">
+    <div class="kpi-label">TikTok Followers</div>
+    <div class="kpi-value">105</div>
+    <div class="kpi-delta new">↑ 24K Views · 949 Likes</div>
+  </div>
+  <div class="kpi green">
+    <div class="kpi-label">Combined Peak Reach</div>
+    <div class="kpi-value">1.77M</div>
+    <div class="kpi-delta up">↑ +198% from 594K</div>
+  </div>
+  <div class="kpi yellow">
+    <div class="kpi-label">YouTube Views</div>
+    <div class="kpi-value">32,941</div>
+    <div class="kpi-delta up">↑ 357K Impressions · Monetized</div>
+  </div>
+  <div class="kpi blue">
+    <div class="kpi-label">Retreat Attendees</div>
+    <div class="kpi-value">~200</div>
+    <div class="kpi-delta up">↑ Sold Out · 5 days early</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- SECTION 1: Audience Growth -->
+  <div class="section" style="margin-top:32px;">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <div>
+        <div class="section-title">Audience Growth Across Platforms</div>
+        <div class="section-desc">JCI owned audience assets — JCI 1 launch through JCI 3 peak</div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-wrap"><canvas id="audienceChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Reach Growth -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num orange">2</div>
+      <div>
+        <div class="section-title">Reach Growth by Event Cycle</div>
+        <div class="section-desc">Pre-event baseline and peak reach — JCI, Jeff Curran Personal (@BigFrogBJJ), YouTube</div>
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-wrap"><canvas id="reachChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 & 4: Combined + Growth Analysis -->
+  <div class="two-col section">
+    <div>
+      <div class="section-header">
+        <div class="section-num green">3</div>
+        <div>
+          <div class="section-title">Combined Media Reach</div>
+          <div class="section-desc">CEO/board one-glance view — sponsorship story</div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-wrap"><canvas id="combinedChart"></canvas></div>
+      </div>
+    </div>
+    <div>
+      <div class="section-header">
+        <div class="section-num purple">4</div>
+        <div>
+          <div class="section-title">Cycle-over-Cycle Growth</div>
+          <div class="section-desc">Combined reach acceleration per event cycle</div>
+        </div>
+      </div>
+      <div class="growth-cards" style="grid-template-columns:1fr; gap:12px;">
+        <div class="growth-card">
+          <div class="arrow">JCI 1 → JCI 2</div>
+          <div class="pct">+54%</div>
+          <div class="detail">594,300 → 915,800<br>+321,500 impressions</div>
+        </div>
+        <div class="growth-card">
+          <div class="arrow">JCI 2 → JCI 3</div>
+          <div class="pct">+93%</div>
+          <div class="detail">915,800 → 1,771,300<br>+855,500 impressions</div>
+        </div>
+        <div class="growth-card" style="border-color: rgba(79,207,168,0.35);">
+          <div class="arrow">JCI 1 → JCI 3 Total</div>
+          <div class="pct">+198%</div>
+          <div class="detail">594,300 → 1,771,300<br>Nearly tripled in &lt;1 year</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Peak Reach Table -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num yellow">5</div>
+      <div>
+        <div class="section-title">Peak Reach by Event — Full Breakdown</div>
+        <div class="section-desc">JCI, Big Frog BJJ, and YouTube reach per event cycle</div>
+      </div>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>JCI Reach</th>
+            <th>@BigFrogBJJ Reach</th>
+            <th>YouTube Reach</th>
+            <th>Combined Reach</th>
+            <th>Growth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>JCI 1</td>
+            <td>180,000</td>
+            <td>300,000</td>
+            <td>114,300</td>
+            <td><strong>594,300</strong></td>
+            <td>—</td>
+          </tr>
+          <tr>
+            <td>JCI 2</td>
+            <td>383,000</td>
+            <td>298,000</td>
+            <td>234,800</td>
+            <td><strong>915,800</strong></td>
+            <td><span class="badge green">+54%</span></td>
+          </tr>
+          <tr>
+            <td>JCI 3</td>
+            <td>711,000</td>
+            <td>598,000</td>
+            <td>462,300</td>
+            <td><strong>1,771,300</strong></td>
+            <td><span class="badge green">+93%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 5b: TikTok Analytics -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num purple">6</div>
+      <div>
+        <div class="section-title">TikTok Analytics — Channel Launch Performance</div>
+        <div class="section-desc">New channel · May 30, 2025 – May 29, 2026 · 85.5% For You page traffic</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="chart-wrap"><canvas id="tiktokChart"></canvas></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; align-content:start;">
+        <div class="prop-card">
+          <div class="prop-name">365 Days</div>
+          <div class="prop-stat"><span class="label">Post Views</span><span class="val up">24,000</span></div>
+          <div class="prop-stat"><span class="label">Likes</span><span class="val up">949</span></div>
+          <div class="prop-stat"><span class="label">Comments</span><span class="val">7</span></div>
+          <div class="prop-stat"><span class="label">Shares</span><span class="val">20</span></div>
+          <div class="prop-stat"><span class="label">Profile Views</span><span class="val">205</span></div>
+          <div class="prop-stat"><span class="label">For You Traffic</span><span class="val up">85.5%</span></div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-name">Recent Trend</div>
+          <div class="prop-stat"><span class="label">60d Views</span><span class="val up">9,252</span></div>
+          <div class="prop-stat"><span class="label">60d View Growth</span><span class="val up">+314%</span></div>
+          <div class="prop-stat"><span class="label">60d Likes</span><span class="val up">404</span></div>
+          <div class="prop-stat"><span class="label">60d Like Growth</span><span class="val up">+692%</span></div>
+          <div class="prop-stat"><span class="label">28d Views</span><span class="val">2,272</span></div>
+          <div class="prop-stat"><span class="label">7d Views</span><span class="val muted">46</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: Martial Life -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num orange">7</div>
+      <div>
+        <div class="section-title">Jeff Curran: Martial Life — Documentary Series</div>
+        <div class="section-desc">YouTube documentary content pillar — 5 episodes published alongside JCI event coverage</div>
+      </div>
+    </div>
+    <div class="table-card" style="margin-bottom:0;">
+      <table>
+        <thead>
+          <tr>
+            <th>Episode</th>
+            <th>Published</th>
+            <th>Runtime</th>
+            <th>Monetization</th>
+            <th>Total Views</th>
+            <th>Likes</th>
+            <th>Comments</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Trailer</strong> — Series Launch</td>
+            <td>Dec 3, 2025</td>
+            <td>0:39</td>
+            <td><span class="badge green">✓ On</span></td>
+            <td>792</td>
+            <td>21</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td><strong>Episode 1</strong> — Series Premiere</td>
+            <td>Jan 1, 2026</td>
+            <td>30:26</td>
+            <td><span class="badge" style="background:rgba(122,132,160,0.15);color:var(--muted);">Off (Copyright)</span></td>
+            <td><strong>4,808</strong></td>
+            <td>140</td>
+            <td>14</td>
+          </tr>
+          <tr>
+            <td>Episode 2 — Gracie Charlottesville</td>
+            <td>Feb 6, 2026</td>
+            <td>1:05:03</td>
+            <td><span class="badge" style="background:rgba(247,107,79,0.15);color:var(--accent2);">Ineligible (Copyright)</span></td>
+            <td>747</td>
+            <td>52</td>
+            <td>1</td>
+          </tr>
+          <tr>
+            <td>Episode 3 — Knoxville</td>
+            <td>Mar 2, 2026</td>
+            <td>1:11:02</td>
+            <td><span class="badge" style="background:rgba(247,107,79,0.15);color:var(--accent2);">Ineligible (Copyright)</span></td>
+            <td>609</td>
+            <td>29</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td>Episode 4 — JCI 2 Feature</td>
+            <td>Apr 15, 2026</td>
+            <td>1:51:50</td>
+            <td><span class="badge" style="background:rgba(247,107,79,0.15);color:var(--accent2);">Ineligible (Copyright)</span></td>
+            <td>700</td>
+            <td>37</td>
+            <td>3</td>
+          </tr>
+          <tr>
+            <td><strong>Episode 5</strong> — Cocoa Beach / JCI 3</td>
+            <td>May 10, 2026</td>
+            <td>32:54</td>
+            <td><span class="badge green">✓ On</span></td>
+            <td>368</td>
+            <td>11</td>
+            <td>1</td>
+          </tr>
+          <tr style="background:var(--surface2);">
+            <td><strong>Martial Life Series Total</strong></td>
+            <td>Dec 2025 – May 2026</td>
+            <td>—</td>
+            <td>—</td>
+            <td><strong>8,024 views</strong></td>
+            <td><strong>290</strong></td>
+            <td><strong>23</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:14px 18px;margin-top:14px;font-size:13px;color:var(--muted);line-height:1.6;">
+      <strong style="color:var(--accent5);">Opportunity:</strong> Episodes 1–4 have copyright flags (music/event audio). Resolving these unlocks monetization across the four longest episodes — Episode 1 alone has 4,808 views and 140 likes. Episode 5 and the Trailer are fully monetized.
+    </div>
+  </div>
+
+  <!-- SECTION 8: YouTube -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num orange">8</div>
+      <div>
+        <div class="section-title">YouTube Channel — Overall Expansion &amp; Monetization</div>
+        <div class="section-desc">Combined JCI event content + Martial Life documentary — 58 subscribers to monetized channel</div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="chart-card">
+        <div class="chart-wrap"><canvas id="youtubeChart"></canvas></div>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:16px;">
+        <div class="prop-card">
+          <div class="prop-name">Channel Overview (365 Days)</div>
+          <div class="prop-stat"><span class="label">Total Views</span><span class="val up">32,941</span></div>
+          <div class="prop-stat"><span class="label">Total Impressions</span><span class="val up">357,750</span></div>
+          <div class="prop-stat"><span class="label">Impressions CTR</span><span class="val">3.5%</span></div>
+          <div class="prop-stat"><span class="label">Avg View Duration</span><span class="val">3:22</span></div>
+          <div class="prop-stat"><span class="label">Subscribers</span><span class="val up">58 → 1,488 (+2,465%)</span></div>
+          <div class="prop-stat"><span class="label">Monetization</span><span class="val up">✓ Active</span></div>
+        </div>
+        <div class="prop-card">
+          <div class="prop-name">Traffic Sources</div>
+          <div class="prop-stat"><span class="label">YouTube Advertising</span><span class="val up">39.8%</span></div>
+          <div class="prop-stat"><span class="label">Browse Features</span><span class="val">20.3%</span></div>
+          <div class="prop-stat"><span class="label">Channel Pages</span><span class="val">10.9%</span></div>
+          <div class="prop-stat"><span class="label">YouTube Search</span><span class="val">10.5%</span></div>
+          <div class="prop-stat"><span class="label">Suggested Videos</span><span class="val">6.8%</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 9: All Properties -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num purple">9</div>
+      <div>
+        <div class="section-title">Full Property Portfolio — Audience Summary</div>
+        <div class="section-desc">All four properties: Team Curran, Big Frog BJJ, Retreats, and JCI</div>
+      </div>
+    </div>
+    <div class="prop-grid">
+      <div class="prop-card">
+        <div class="prop-name">Jeff Curran Invitational</div>
+        <div class="prop-stat"><span class="label">Instagram</span><span class="val up">638 → 1,946 (+205%)</span></div>
+        <div class="prop-stat"><span class="label">YouTube Subscribers</span><span class="val up">58 → 1,488 (+2,465%)</span></div>
+        <div class="prop-stat"><span class="label">TikTok</span><span class="val up">0 → 105 (New)</span></div>
+        <div class="prop-stat"><span class="label">Peak Reach</span><span class="val up">40K → 711K</span></div>
+      </div>
+      <div class="prop-card">
+        <div class="prop-name">Jeff Curran Personal (@BigFrogBJJ)</div>
+        <div class="prop-stat"><span class="label">Instagram Followers</span><span class="val up">9,700 → 10,500 (+800)</span></div>
+        <div class="prop-stat"><span class="label">Baseline Reach</span><span class="val">~40,000</span></div>
+        <div class="prop-stat"><span class="label">Peak Reach</span><span class="val up">598,000 (+1,395%)</span></div>
+        <div class="prop-stat"><span class="label">Content Mix</span><span class="val">JCI · Retreat · Martial Life</span></div>
+      </div>
+      <div class="prop-card">
+        <div class="prop-name">Team Curran</div>
+        <div class="prop-stat"><span class="label">Instagram Followers</span><span class="val up">3,014 → 3,446 (+14.3%)</span></div>
+        <div class="prop-stat"><span class="label">Growth</span><span class="val up">+432 Followers</span></div>
+        <div class="prop-stat"><span class="label">Primary Focus</span><span class="val">Student acquisition &amp; retention</span></div>
+        <div class="prop-stat"><span class="label">Programs</span><span class="val">Women's · Kids · Affiliates</span></div>
+      </div>
+      <div class="prop-card">
+        <div class="prop-name">Big Frog BJJ Retreats</div>
+        <div class="prop-stat"><span class="label">Instagram Followers</span><span class="val up">489 → 729 (+49%)</span></div>
+        <div class="prop-stat"><span class="label">Event Status</span><span class="val up">✓ Sold Out</span></div>
+        <div class="prop-stat"><span class="label">Registered Attendees</span><span class="val">~200</span></div>
+        <div class="prop-stat"><span class="label">Sold Out</span><span class="val up">5 days before close</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 10: Projections -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num green">10</div>
+      <div>
+        <div class="section-title">12-Month Projections — May 2027</div>
+        <div class="section-desc">If current trajectory continues</div>
+      </div>
+    </div>
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr>
+            <th>Platform / Metric</th>
+            <th>Current</th>
+            <th>Projected May 2027</th>
+            <th>Est. Growth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>JCI Instagram Followers</td><td>1,946</td><td>3,500 – 4,000</td><td><span class="badge green">+80–106%</span></td></tr>
+          <tr><td>JCI Peak Reach</td><td>711K</td><td>1.2M – 1.5M</td><td><span class="badge green">+69–111%</span></td></tr>
+          <tr><td>Big Frog Peak Reach</td><td>598K</td><td>900K – 1.2M</td><td><span class="badge green">+51–101%</span></td></tr>
+          <tr><td>YouTube Subscribers</td><td>1,488</td><td>3,000 – 4,000</td><td><span class="badge green">+102–169%</span></td></tr>
+          <tr><td>YouTube Impressions</td><td>462K</td><td>800K – 1.2M</td><td><span class="badge green">+73–160%</span></td></tr>
+          <tr><td><strong>Combined Event Reach</strong></td><td><strong>1.77M</strong></td><td><strong>3M+</strong></td><td><span class="badge blue">+70%+</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>Confidential — Director of Marketing, Media &amp; Events · Annual Performance Report</span>
+  <span>Jeff Curran Invitational · Big Frog BJJ · Team Curran · Big Frog BJJ Retreats · Sep 2025 – May 2026</span>
+</div>
+
+<script>
+const GRID = 'rgba(255,255,255,0.06)';
+const TICK = '#7a84a0';
+Chart.defaults.color = TICK;
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.font.size = 12;
+
+// 1. Audience Growth — Stacked Bar
+new Chart(document.getElementById('audienceChart'), {
+  type: 'bar',
+  data: {
+    labels: ['JCI 1 Start', 'JCI 1 Peak', 'JCI 2 Peak', 'JCI 3 Peak'],
+    datasets: [
+      { label: 'Instagram', data: [638, 953, 1548, 1946], backgroundColor: 'rgba(79,142,247,0.85)', borderRadius: 0, borderSkipped: false },
+      { label: 'YouTube Subscribers', data: [58, 525, 1111, 1488], backgroundColor: 'rgba(247,107,79,0.85)', borderRadius: 0, borderSkipped: false },
+      { label: 'TikTok', data: [0, 0, 44, 105], backgroundColor: 'rgba(192,132,252,0.85)', borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: { position: 'top', labels: { padding: 16, usePointStyle: true, pointStyleWidth: 10 } },
+      tooltip: {
+        mode: 'index',
+        callbacks: {
+          label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`,
+          footer: items => `Total: ${items.reduce((s,i)=>s+i.parsed.y,0).toLocaleString()}`
+        }
+      }
+    },
+    scales: {
+      x: { stacked: true, grid: { color: GRID }, ticks: { color: TICK } },
+      y: { stacked: true, grid: { color: GRID }, ticks: { color: TICK, callback: v => v.toLocaleString() }, beginAtZero: true }
+    }
+  }
+});
+
+// 2. Reach Growth
+new Chart(document.getElementById('reachChart'), {
+  type: 'line',
+  data: {
+    labels: ['Pre JCI 1', 'Peak JCI 1', 'Pre JCI 2', 'Peak JCI 2', 'Pre JCI 3', 'Peak JCI 3'],
+    datasets: [
+      { label: 'JCI', data: [40000,180000,40000,383000,180000,711000], borderColor: '#4f8ef7', tension: 0.3, pointRadius: 5, fill: false, borderWidth: 2.5 },
+      { label: '@BigFrogBJJ (Jeff Curran Personal)', data: [40000,300000,40000,298000,96000,598000], borderColor: '#f76b4f', tension: 0.3, pointRadius: 5, fill: false, borderWidth: 2.5 },
+      { label: 'YouTube', data: [0,114300,114300,234800,234800,462300], borderColor: '#4fcfa8', tension: 0.3, pointRadius: 5, fill: false, borderWidth: 2.5 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: { legend: { position: 'top', labels: { padding: 14, usePointStyle: true, pointStyleWidth: 10 } }, tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}` } } },
+    scales: { x: { grid: { color: GRID }, ticks: { color: TICK, maxRotation: 30 } }, y: { grid: { color: GRID }, ticks: { color: TICK, callback: v => v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v }, beginAtZero: true } }
+  }
+});
+
+// 3. Combined Stacked
+new Chart(document.getElementById('combinedChart'), {
+  type: 'bar',
+  data: {
+    labels: ['JCI 1', 'JCI 2', 'JCI 3'],
+    datasets: [
+      { label: 'JCI Reach', data: [180000,383000,711000], backgroundColor: 'rgba(79,142,247,0.85)', borderRadius: 0, borderSkipped: false },
+      { label: '@BigFrogBJJ Reach', data: [300000,298000,598000], backgroundColor: 'rgba(247,107,79,0.85)', borderRadius: 0, borderSkipped: false },
+      { label: 'YouTube Reach', data: [114300,234800,462300], backgroundColor: 'rgba(79,207,168,0.85)', borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: { position: 'top', labels: { padding: 14, usePointStyle: true, pointStyleWidth: 10 } },
+      tooltip: { mode: 'index', callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`, footer: items => `Total: ${items.reduce((s,i)=>s+i.parsed.y,0).toLocaleString()}` } }
+    },
+    scales: { x: { stacked: true, grid: { color: GRID }, ticks: { color: TICK } }, y: { stacked: true, grid: { color: GRID }, ticks: { color: TICK, callback: v => v >= 1000000 ? (v/1000000).toFixed(2)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v }, beginAtZero: true } }
+  }
+});
+
+// TikTok views by period
+new Chart(document.getElementById('tiktokChart'), {
+  type: 'bar',
+  data: {
+    labels: ['7 Days', '28 Days', '60 Days', '365 Days'],
+    datasets: [
+      {
+        label: 'Post Views',
+        data: [46, 2272, 9252, 24000],
+        backgroundColor: ['rgba(192,132,252,0.5)','rgba(192,132,252,0.6)','rgba(192,132,252,0.75)','rgba(192,132,252,0.9)'],
+        borderRadius: 6, borderSkipped: false, yAxisID: 'y'
+      },
+      {
+        label: 'Likes',
+        data: [0, 58, 404, 949],
+        backgroundColor: 'rgba(251,191,36,0.75)',
+        borderRadius: 6, borderSkipped: false, type: 'line',
+        borderColor: '#fbbf24', pointRadius: 5, fill: false, borderWidth: 2.5, yAxisID: 'y2'
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: { position: 'top', labels: { padding: 14, usePointStyle: true, pointStyleWidth: 10 } },
+      tooltip: { callbacks: { label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}` } }
+    },
+    scales: {
+      x: { grid: { color: GRID }, ticks: { color: TICK } },
+      y: { grid: { color: GRID }, ticks: { color: TICK, callback: v => v >= 1000 ? (v/1000).toFixed(0)+'K' : v }, beginAtZero: true, position: 'left' },
+      y2: { grid: { display: false }, ticks: { color: TICK }, beginAtZero: true, position: 'right' }
+    }
+  }
+});
+
+// 4. YouTube — Martial Life episode timeline with estimated monthly views
+new Chart(document.getElementById('youtubeChart'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Jun–Nov\n2025', 'Trailer\nDec 3', 'Ep 1\nJan 1', 'Ep 2\nFeb 6', 'Ep 3\nMar 2', 'Ep 4\nApr 15', 'Ep 5\nMay 10'
+    ],
+    datasets: [
+      {
+        label: 'Est. Monthly Views',
+        data: [800, 1200, 18500, 3200, 2100, 2400, 1800],
+        backgroundColor: [
+          'rgba(79,142,247,0.5)',
+          'rgba(192,132,252,0.7)',
+          'rgba(247,107,79,0.9)',
+          'rgba(192,132,252,0.75)',
+          'rgba(192,132,252,0.75)',
+          'rgba(192,132,252,0.75)',
+          'rgba(192,132,252,0.75)',
+        ],
+        borderRadius: 6,
+        borderSkipped: false,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Subscribers',
+        type: 'line',
+        data: [200, 400, 900, 1050, 1150, 1350, 1488],
+        borderColor: '#4fcfa8',
+        backgroundColor: 'rgba(79,207,168,0.06)',
+        tension: 0.4,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        fill: false,
+        borderWidth: 2.5,
+        yAxisID: 'y2'
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: true,
+    plugins: {
+      legend: { position: 'top', labels: { padding: 14, usePointStyle: true, pointStyleWidth: 10 } },
+      tooltip: {
+        callbacks: {
+          label: c => ` ${c.dataset.label}: ${c.parsed.y.toLocaleString()}`,
+          afterBody: items => {
+            const notes = ['Baseline channel activity','Trailer launch — 792 total views','Ep 1 + BJJ Superfight spike (13.4K)','Episode 2 — 747 total views','Episode 3 — 609 total views','Episode 4 — 700 total views','Episode 5 — 368 total views'];
+            return notes[items[0].dataIndex] ? `\n📌 ${notes[items[0].dataIndex]}` : '';
+          }
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: GRID }, ticks: { color: TICK } },
+      y: { grid: { color: GRID }, ticks: { color: TICK, callback: v => v >= 1000 ? (v/1000).toFixed(1)+'K' : v }, beginAtZero: true, position: 'left', title: { display: true, text: 'Est. Views', color: TICK, font: { size: 11 } } },
+      y2: { grid: { display: false }, ticks: { color: TICK }, beginAtZero: true, position: 'right', title: { display: true, text: 'Subscribers', color: TICK, font: { size: 11 } } }
+    }
+  }
+});
+</script>
+</body>
+</html>
